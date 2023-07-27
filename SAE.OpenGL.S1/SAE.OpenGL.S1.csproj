@@ -1,3 +1,41 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a32d1605c4fdb9414520d87c43d69d54dbc113884ff9064c2d7bb54633e2a648
-size 4347
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<AssetSourceFiles Include="fonts/**/*.*" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <Content Include="fonts\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ShaderSourceFiles Include="Shaders/**/*.*" />
+    <FontSourceFiles Include="Fonts/**/*.*" />
+    <TextureSourceFiles Include="Textures/**/*.*" />
+    <ModelSourceFiles Include="Models/**/*.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ObjLoader\source\CjClutter.ObjLoader.Loader\CjClutter.ObjLoader.Loader.csproj" />
+    <ProjectReference Include="..\OpenGL.Game\OpenGL.Game\OpenGL.Game.csproj" />
+    <ProjectReference Include="..\OpenGL.Platform\OpenGL.Platform.csproj" />
+    <ProjectReference Include="..\OpenGL.UI\OpenGL.UI.csproj" />
+    <ProjectReference Include="..\OpenGL\OpenGL.csproj" />
+  </ItemGroup>
+  <Target Name="CopyCustomContent" BeforeTargets="PrepareForBuild">
+    <Copy SourceFiles="@(ShaderSourceFiles)" DestinationFolder="$(OutDir)\shaders" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(FontSourceFiles)" DestinationFolder="$(OutDir)\fonts" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(TextureSourceFiles)" DestinationFolder="$(OutDir)\textures" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ModelSourceFiles)" DestinationFolder="$(OutDir)\models" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
+

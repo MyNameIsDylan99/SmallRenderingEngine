@@ -1,3 +1,29 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fc68dc9c7f27a35bcb7c652a01743b20d45ea484b47f41b51a6a2a3849df2279
-size 558
+﻿using OpenGL.Mathematics;
+
+namespace OpenGL.Game
+{
+    public class GameObject
+    {
+        public string Name { get; private set; }
+
+        public Transform Transform { get; set; } = new Transform();
+
+        public MeshRenderer Renderer { get; private set; }
+
+        public GameObject(string name, MeshRenderer renderer)
+        {
+            this.Renderer = renderer;
+            this.Name = name;
+        }
+
+        public void Initialize()
+        {
+
+        }
+
+        public void Update()
+        {
+
+        }
+    }
+}

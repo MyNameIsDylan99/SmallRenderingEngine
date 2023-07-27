@@ -1,3 +1,25 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f699888606f6dd8b1f60a8e2643f074a51f9dd0abeb3da549a2d3b66871f5133
-size 1139
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenGL.Game", "OpenGL.Game\OpenGL.Game.csproj", "{F64AAB96-A31B-4963-BE2D-9F93BF9EA766}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F64AAB96-A31B-4963-BE2D-9F93BF9EA766}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F64AAB96-A31B-4963-BE2D-9F93BF9EA766}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F64AAB96-A31B-4963-BE2D-9F93BF9EA766}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F64AAB96-A31B-4963-BE2D-9F93BF9EA766}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C892AE86-8B66-4517-A0C5-A70009834CA4}
+	EndGlobalSection
+EndGlobal

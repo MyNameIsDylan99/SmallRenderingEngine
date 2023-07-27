@@ -1,3 +1,60 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a65ff54a03b793d0c99ea73ec974bf1a2087a59dd38ff1c7d62de336f43611b8
-size 2240
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="OpenGL.Game.Game">
+    <Position X="2.75" Y="1.5" Width="3" />
+    <AssociationLine Name="SceneGraph" Type="OpenGL.Game.GameObject">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-0.019" Y="0.226" Height="0.182" Width="2.704" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>Game.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="SceneGraph" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="OpenGL.Game.GameObject">
+    <Position X="8.75" Y="1.25" Width="2.75" />
+    <AssociationLine Name="Renderer" Type="OpenGL.Game.MeshRenderer">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.359" Y="0.11" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAQAAAAAAAAQAAAAAAAAAAACAAAAAAAA=</HashCode>
+      <FileName>GameObject.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Transform" />
+      <Property Name="Renderer" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="OpenGL.Mathematics.Transform">
+    <Position X="12.75" Y="1.25" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="OpenGL.Game.MeshRenderer">
+    <Position X="6.75" Y="6.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAgAA=</HashCode>
+      <FileName>MeshRenderer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Geometry" />
+      <Property Name="Material" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="OpenGL.VAO" Collapsed="true">
+    <Position X="10.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OpenGL.Material" Collapsed="true">
+    <Position X="3.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
