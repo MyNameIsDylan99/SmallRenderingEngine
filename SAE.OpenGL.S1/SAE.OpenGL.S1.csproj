@@ -22,6 +22,7 @@
     <FontSourceFiles Include="Fonts/**/*.*" />
     <TextureSourceFiles Include="Textures/**/*.*" />
     <ModelSourceFiles Include="Models/**/*.*" />
+    <UISourceFiles Include="UI/**/*.*" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ObjLoader\source\CjClutter.ObjLoader.Loader\CjClutter.ObjLoader.Loader.csproj" />
@@ -35,6 +36,7 @@
     <Copy SourceFiles="@(FontSourceFiles)" DestinationFolder="$(OutDir)\fonts" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(TextureSourceFiles)" DestinationFolder="$(OutDir)\textures" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(ModelSourceFiles)" DestinationFolder="$(OutDir)\models" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(UISourceFiles)" DestinationFolder="$(OutDir)\ui" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>

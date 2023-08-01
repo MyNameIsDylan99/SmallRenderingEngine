@@ -8,4 +8,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = OpenGL.Game
-build_property.ProjectDir = C:\Users\dylan\Desktop\opengl4csharp-dotnetcore\opengl4csharp-dotnetcore\OpenGL.Game\OpenGL.Game\
+build_property.ProjectDir = C:\Users\dylan\Documents\Git\sae_s1\OpenGL.Game\OpenGL.Game\

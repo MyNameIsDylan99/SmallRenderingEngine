@@ -108,7 +108,8 @@
       "OpenGL.Game/1.0.0": {
         "dependencies": {
           "Giawa.OpenGL": "0.2.1",
-          "Giawa.OpenGL.Platform": "0.1.5"
+          "Giawa.OpenGL.Platform": "0.1.5",
+          "OpenGL.UI": "1.0.0"
         },
         "runtime": {
           "OpenGL.Game.dll": {}

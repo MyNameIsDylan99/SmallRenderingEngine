@@ -4,14 +4,13 @@ using OpenGL;
 using static OpenGL.GenericVAO;
 using OpenGL.Game;
 using OpenGL.Platform;
-using SAE.OpenGL.S1.Utility;
+using OpenGL.Game.Components;
 
 namespace SAEOpenGL.S1
 {
     internal static class Program
     {
         private static Game game = new Game();
-        private static List<ShaderProgram> materials = new List<ShaderProgram>();
 
         private static int Width { get => game.Width; set => game.Width = value; }
         private static int Height { get => game.Height; set => game.Height = value; }
@@ -20,51 +19,11 @@ namespace SAEOpenGL.S1
 
         #region Shader Parameters
 
-        //General
-        private static bool enableLighting = true;
 
-        //Ambient light
-        private static Vector3 ambientColor = new Vector3(1, 1, 1);
-        private static float ambientIntensity = 0.3f;
 
-        //Point light
-        private static GameObject lightObject;
-        private static Vector3 lightColor = new Vector3(1, 1, 1);
-        private static float diffuseIntensity = 0.5f;
-        private static float specularIntensity = 0.5f;
-        private static float hardness = 64f;
-        private static Matrix4 lightDataMatrix = new Matrix4();
 
-        private static void FillLightDataMatrix()
-        {
-            lightDataMatrix.SetMatrix
-                (
-                new Vector4(lightObject.Transform.Position, ambientIntensity),
-                new Vector4(ambientColor, diffuseIntensity),
-                new Vector4(lightColor, specularIntensity),
-                new Vector4(game.CameraPos, ambientIntensity)
-                );
-        }
 
         #endregion
-
-        #region Key States
-
-        private static bool isWPressed = false;
-        private static bool isSPressed = false;
-        private static bool isAPressed = false;
-        private static bool isDPressed = false;
-        private static bool isEPressed = false;
-        private static bool isQPressed = false;
-        private static bool isLPressed = false;
-        private static bool isSpacePressed = false;
-
-        private static bool isUpPressed = false;
-        private static bool isDownPressed = false;
-        private static bool isLeftPressed = false;
-        private static bool isRightPressed = false;
-
-        #endregion Key States
 
         #region Cube
 
@@ -261,17 +220,6 @@ namespace SAEOpenGL.S1
             var gearMaterial = ShaderProgram.Create("shaders\\gearVert.vs", "shaders\\gearFrag.fs");
             var lightMaterial = ShaderProgram.Create("shaders/vertLight.vs", "shaders/fragLight.fs");
 
-            materials.Add(cottageMaterial);
-            materials.Add(gearMaterial);
-
-            foreach (var material in materials)
-            {
-            material.Use();
-
-            material["color"].SetValue(new Vector3(1, 1, 1));
-            material["enableLighting"].SetValue(enableLighting);
-            }
-
 
             //Load the textures
             List<OpenGL.Texture> cottageTextures = new List<OpenGL.Texture>();
@@ -283,7 +231,7 @@ namespace SAEOpenGL.S1
             cottageTextures.Add(alphaTexture);
 
             List<OpenGL.Texture> gearTextures = new List<OpenGL.Texture>();
-            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_BaseColor.png")); //TODO: Fix issue with alpha map from previous model being used for this model.
+            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_BaseColor.png")); 
 
             //Setting the values of the sampler2Ds to their respective texture unit
             //Texture unit 0 = baseColorMap (diffuseColor)
@@ -303,14 +251,14 @@ namespace SAEOpenGL.S1
             OpenGL.Gl.ProgramUniform1i(gearMaterial.ProgramID, baseColor, 0);
 
             //Setup lightMaterial
-            lightMaterial.Use();
-            lightMaterial["lightColor"].SetValue(lightColor);
+            //lightMaterial.Use();
+            //lightMaterial["lightColor"].SetValue(lightColor);
 
-            //Creating the vbos for the obj models
+            //Creating the vaos for the obj models
 
             LoadObjFile("models/Gear1.obj", out List<Vertex> vertices, out List<ObjLoader.Loader.Data.VertexData.Texture> uvs, out List<Normal> normals, out List<uint> indices);
 
-            var geo_gear = CreateVAO(vertices.ToArray(), uvs.ToArray(), normals.ToArray(), indices.ToArray(), cottageMaterial);
+            var geo_gear = CreateVAO(vertices.ToArray(), uvs.ToArray(), normals.ToArray(), indices.ToArray(), gearMaterial);
 
             LoadObjFile("models/Cottage_FREE.obj", out List<Vertex> outputVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> outputTextures, out List<Normal> outputNormals, out List<uint> outputIndices);
 
@@ -327,9 +275,12 @@ namespace SAEOpenGL.S1
             var geo_light = new VAO(lightMaterial, vbo_light);
 
             //Create game object
-            lightObject = new GameObject("Light source", new MeshRenderer(lightMaterial, geo_light));
+            var lightObject = new GameObject("Light source", new MeshRenderer(lightMaterial, geo_light));
+            PointLight pointLight = new PointLight(lightObject);
+            MovementController lightController = new MovementController(lightObject, true);
+
             GameObject obj_cottage = new GameObject("Cottage", new MeshRenderer(cottageMaterial, geo_cottage, cottageTextures));
-            GameObject obj_gear = new GameObject("Gear", new MeshRenderer(cottageMaterial, geo_gear, gearTextures));
+            GameObject obj_gear = new GameObject("Gear", new MeshRenderer(gearMaterial, geo_gear, gearTextures));
 
             obj_cottage.Transform.Position = new Vector3(0, 0, -10);
             obj_cottage.Transform.Scale = new Vector3(0.5f, 0.5f, 0.5f);
@@ -341,16 +292,25 @@ namespace SAEOpenGL.S1
             lightObject.Transform.Scale = new Vector3(0.2f, 0.2f, 0.2f);
             lightObject.Transform.Rotation = new Vector3(0.0f, 0.0f, 0.0f);
 
+            GameObject cameraObject = new GameObject("Camera");
+            Camera cameraComponent = new Camera(cameraObject);
+            MovementController cameraController = new MovementController(cameraObject);
+
+            game.MainCamera = cameraComponent;
+            game.PointLights.Add(pointLight);
+
             // Add to scene
             game.SceneGraph.Add(obj_cottage);
             game.SceneGraph.Add(obj_gear);
             game.SceneGraph.Add(lightObject);
+            game.SceneGraph.Add(cameraObject);
 
             //User Interface
             UserInterfaceHelper.SetupUI(Width,Height);
 
             //Hook input callbacks
-            AddInputCallbacks();
+            InputHelper.InitInputs();
+            InputHelper.ButtonLPressedEvent += game.ToggleLightingCallback;
 
             //Window.SetScreenMode(new Compatibility.ScreenResolution(1919, 1080, 256, 60), true);
             var windowPosition = Window.GetWindowPosition();
@@ -368,11 +328,6 @@ namespace SAEOpenGL.S1
 
                 OnPreRenderFrame();
 
-                //Fill the light data matrix and pass it to the shader
-                FillLightDataMatrix();
-                cottageMaterial.Use();
-                cottageMaterial["lightData"].SetValue(lightDataMatrix);
-
                 game.Update();
                 game.Render();
 
@@ -382,140 +337,6 @@ namespace SAEOpenGL.S1
             }
         }
 
-
-        #region Input
-
-        private static void AddInputCallbacks()
-        {
-
-            // Hook to the escape press event using the OpenGL.UI class library
-            Input.Subscribe('w', new Event(OnWChanged));
-            Input.Subscribe('s', new Event(OnSChanged));
-            Input.Subscribe('a', new Event(OnAChanged));
-            Input.Subscribe('d', new Event(OnDChanged));
-            Input.Subscribe('e', new Event(OnEChanged));
-            Input.Subscribe('q', new Event(OnQChanged));
-            Input.Subscribe('l', new Event(OnLChanged));
-            Input.Subscribe((char)0, new Event(OnLeftChanged));
-            Input.Subscribe((char)1, new Event(OnRightChanged));
-            Input.Subscribe((char)2, new Event(OnUpChanged));
-            Input.Subscribe((char)3, new Event(OnDownChanged));
-            Input.Subscribe((char)ConsoleKey.Spacebar, new Event(OnSpaceChanged));
-
-            Input.Subscribe((char)27, new Event(OnEscapeChanged));
-
-            Input.MouseMove = new Event(MouseMove);
-        }
-        private static void OnWChanged(bool isPressed)
-        {
-            isWPressed = isPressed;
-        }
-
-        private static void OnSChanged(bool isPressed)
-        {
-            isSPressed = isPressed;
-        }
-
-        private static void OnAChanged(bool isPressed)
-        {
-            isAPressed = isPressed;
-        }
-
-        private static void OnDChanged(bool isPressed)
-        {
-            isDPressed = isPressed;
-        }
-
-        private static void OnEChanged(bool isPressed)
-        {
-            isEPressed = isPressed;
-        }
-
-        private static void OnQChanged(bool isPressed)
-        {
-            isQPressed = isPressed;
-        }
-
-        private static void OnLChanged(bool isPressed)
-        {
-            isLPressed = isPressed;
-            if (isLPressed == true)
-            {
-                enableLighting = !enableLighting;
-
-                foreach (var material in materials)
-                {
-                material.Use();
-                material["enableLighting"].SetValue(enableLighting);
-                }
-
-                UserInterfaceHelper.ToggleLightingOnText(enableLighting);
-            }
-        }
-
-        private static void OnSpaceChanged(bool isPressed)
-        {
-            isSpacePressed = isPressed;
-
-            if (isPressed == true)
-            {
-                controlLight = !controlLight;
-            }
-        }
-
-        private static void OnEscapeChanged(bool isPressed)
-        {
-            CursorRestriction.ReleaseCursor();
-            Window.OnClose();
-        }
-
-        private static void OnUpChanged(bool isPressed)
-        {
-            isUpPressed = isPressed;
-        }
-
-        private static void OnDownChanged(bool isPressed)
-        {
-            isDownPressed = isPressed;
-        }
-
-        private static void OnLeftChanged(bool isPressed)
-        {
-            isLeftPressed = isPressed;
-        }
-
-        private static void OnRightChanged(bool isPressed)
-        {
-            isRightPressed = isPressed;
-        }
-
-        private static void MouseMove(int lx, int ly, int x, int y)
-        {
-            var moveDeltaX = x - lx;
-            var moveDeltaY = y - ly;
-
-            int maxDeltaX = (int)(Window.Width * 0.9);
-            int maxDeltaY = ((int)(Window.Height * 0.9));
-
-            if (moveDeltaX > maxDeltaX || moveDeltaY > maxDeltaY || moveDeltaX < -maxDeltaX || moveDeltaY < -maxDeltaY)
-                return;
-
-            game.CameraRotation += new Vector3(moveDeltaY, moveDeltaX, 0) * Time.DeltaTime * game.RotationSpeed;
-
-            if (x == Window.Width - 1)
-                Window.WarpPointer(1, y);
-
-            if (x == 0)
-                Window.WarpPointer(Window.Width - 2, y);
-
-            if (y == Window.Height - 1)
-                Window.WarpPointer(x, 1);
-
-            if (y == 0)
-                Window.WarpPointer(x, Window.Height - 2);
-        }
-
-        #endregion Input Callbacks
 
         #region Other Callbacks
 
@@ -543,41 +364,6 @@ namespace SAEOpenGL.S1
             Gl.Viewport(0, 0, Window.Width, Window.Height);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            if (isWPressed)
-            {
-                if (!controlLight) game.ProcessForwardMovement();
-                else MoveLightForward();
-            }
-
-            if (isSPressed)
-            {
-                if (!controlLight) game.ProcessBackwardsMovement();
-                else MoveLightBackward();
-            }
-
-            if (isAPressed)
-            {
-                if (!controlLight) game.ProcessLeftMovement();
-                else MoveLightLeft();
-            }
-
-            if (isDPressed)
-            {
-                if (!controlLight) game.ProcessRightMovement();
-                else MoveLightRight();
-            }
-
-            if (isEPressed)
-            {
-                if (!controlLight) game.ProcessUpMovement();
-                else MoveLightUp();
-            }
-
-            if (isQPressed)
-            {
-                if (!controlLight) game.ProcessDownMovement();
-                else MoveLightDown();
-            }
         }
 
         private static void OnPostRenderFrame()
@@ -607,40 +393,6 @@ namespace SAEOpenGL.S1
         }
 
         #endregion Other Callbacks
-
-        #region LightMovement
-
-        private static void MoveLightForward()
-        {
-            lightObject.Transform.Position += new Vector3(0, 0, -1) * Time.DeltaTime * game.MovementSpeed;
-        }
-
-        private static void MoveLightBackward()
-        {
-            lightObject.Transform.Position += new Vector3(0, 0, 1) * Time.DeltaTime * game.MovementSpeed;
-        }
-
-        private static void MoveLightUp()
-        {
-            lightObject.Transform.Position += new Vector3(0, 1, 0) * Time.DeltaTime * game.MovementSpeed;
-        }
-
-        private static void MoveLightDown()
-        {
-            lightObject.Transform.Position += new Vector3(0, -1, 0) * Time.DeltaTime * game.MovementSpeed;
-        }
-
-        private static void MoveLightLeft()
-        {
-            lightObject.Transform.Position += new Vector3(-1, 0, 0) * Time.DeltaTime * game.MovementSpeed;
-        }
-
-        private static void MoveLightRight()
-        {
-            lightObject.Transform.Position += new Vector3(1, 0, 0) * Time.DeltaTime * game.MovementSpeed;
-        }
-
-        #endregion LightMovement
 
         #region ObjLoading
         private static void LoadObjFile(string path, out List<Vertex> outputVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> outputTextures, out List<Normal> outputNormals, out List<uint> outputIndices)
@@ -758,7 +510,7 @@ namespace SAEOpenGL.S1
         }
         #endregion
 
-        #region OpenGL-Methods
+        #region OpenGL-HelperMethods
 
         private static VAO CreateVAO(Vector3[] vertices, Vector2[] uvs, Vector3[] normals, uint[] indices, ShaderProgram material)
         {

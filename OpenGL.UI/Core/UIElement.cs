@@ -236,7 +236,13 @@ namespace OpenGL.UI
                     uiQuad.DisposeChildren = true;
                     uiQuad.Dispose();
                 }
+                if(BackgroundTexture != null)
+                {
+                uiQuad = OpenGL.Geometry.CreateQuad(Shaders.TexturedUIShader, Vector2.Zero, new Vector2(Size.X, Size.Y), Vector2.Zero, new Vector2(1, 1));
+                }
+                else
                 uiQuad = OpenGL.Geometry.CreateQuad(Shaders.SolidUIShader, Vector2.Zero, new Vector2(Size.X, Size.Y), Vector2.Zero, new Vector2(1, 1));
+
             }
 
             Invalidate();

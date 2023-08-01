@@ -157,7 +157,8 @@
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "Giawa.OpenGL": "0.2.1",
-          "Giawa.OpenGL.Platform": "0.1.5"
+          "Giawa.OpenGL.Platform": "0.1.5",
+          "OpenGL.UI": "1.0.0"
         },
         "compile": {
           "bin/placeholder/OpenGL.Game.dll": {}
@@ -530,11 +531,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\SAE.OpenGL.S1\\SAE.OpenGL.S1.csproj",
+      "projectUniqueName": "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\SAE.OpenGL.S1\\SAE.OpenGL.S1.csproj",
       "projectName": "SAE.OpenGL.S1",
-      "projectPath": "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\SAE.OpenGL.S1\\SAE.OpenGL.S1.csproj",
+      "projectPath": "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\SAE.OpenGL.S1\\SAE.OpenGL.S1.csproj",
       "packagesPath": "C:\\Users\\dylan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\SAE.OpenGL.S1\\obj\\",
+      "outputPath": "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\SAE.OpenGL.S1\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -555,20 +556,20 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\ObjLoader\\source\\CjClutter.ObjLoader.Loader\\CjClutter.ObjLoader.Loader.csproj": {
-              "projectPath": "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\ObjLoader\\source\\CjClutter.ObjLoader.Loader\\CjClutter.ObjLoader.Loader.csproj"
+            "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\ObjLoader\\source\\CjClutter.ObjLoader.Loader\\CjClutter.ObjLoader.Loader.csproj": {
+              "projectPath": "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\ObjLoader\\source\\CjClutter.ObjLoader.Loader\\CjClutter.ObjLoader.Loader.csproj"
             },
-            "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\OpenGL.Game\\OpenGL.Game\\OpenGL.Game.csproj": {
-              "projectPath": "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\OpenGL.Game\\OpenGL.Game\\OpenGL.Game.csproj"
+            "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\OpenGL.Game\\OpenGL.Game\\OpenGL.Game.csproj": {
+              "projectPath": "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\OpenGL.Game\\OpenGL.Game\\OpenGL.Game.csproj"
             },
-            "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\OpenGL.Platform\\OpenGL.Platform.csproj": {
-              "projectPath": "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\OpenGL.Platform\\OpenGL.Platform.csproj"
+            "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\OpenGL.Platform\\OpenGL.Platform.csproj": {
+              "projectPath": "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\OpenGL.Platform\\OpenGL.Platform.csproj"
             },
-            "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\OpenGL.UI\\OpenGL.UI.csproj": {
-              "projectPath": "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\OpenGL.UI\\OpenGL.UI.csproj"
+            "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\OpenGL.UI\\OpenGL.UI.csproj": {
+              "projectPath": "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\OpenGL.UI\\OpenGL.UI.csproj"
             },
-            "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\OpenGL\\OpenGL.csproj": {
-              "projectPath": "C:\\Users\\dylan\\Desktop\\opengl4csharp-dotnetcore\\opengl4csharp-dotnetcore\\OpenGL\\OpenGL.csproj"
+            "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\OpenGL\\OpenGL.csproj": {
+              "projectPath": "C:\\Users\\dylan\\Documents\\Git\\sae_s1\\OpenGL\\OpenGL.csproj"
             }
           }
         }

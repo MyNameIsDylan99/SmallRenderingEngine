@@ -1,6 +1,4 @@
-﻿namespace SAE.OpenGL.S1.Utility
-{
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
     /// <summary>
@@ -38,5 +36,4 @@ public class CursorRestriction
             RECT rect = new RECT();
         ClipCursor(ref rect); // Resets the cursor restriction
     }
-}
 }

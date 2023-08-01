@@ -10,6 +10,7 @@
         "dependencies": {
           "Giawa.OpenGL": "0.2.1",
           "Giawa.OpenGL.Platform": "0.1.5",
+          "OpenGL.UI": "1.0.0",
           "CjClutter.ObjLoader.Loader": "1.0.0.0",
           "OpenGL": "0.2.1.0",
           "OpenGL.Platform": "1.0.0.0"
@@ -100,6 +101,15 @@
         },
         "runtime": {
           "OpenGL.Platform.dll": {}
+        }
+      },
+      "OpenGL.UI/1.0.0": {
+        "dependencies": {
+          "Giawa.OpenGL": "0.2.1",
+          "Giawa.OpenGL.Platform": "0.1.5"
+        },
+        "runtime": {
+          "OpenGL.UI.dll": {}
         }
       },
       "CjClutter.ObjLoader.Loader/1.0.0.0": {
@@ -201,6 +211,11 @@
       "sha512": ""
     },
     "Giawa.OpenGL.Platform/0.1.5": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "OpenGL.UI/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

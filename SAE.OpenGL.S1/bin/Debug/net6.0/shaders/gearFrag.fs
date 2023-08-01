@@ -63,6 +63,8 @@ void main()
    //Lighting
    vec3 lightDirection = normalize(lightPosition - position);
    vec3 viewDirection = normalize(viewPosition - position);
+   float distanceToLight = length(lightPosition-position);
+   float k = 1/pow(distanceToLight,2);
 
    // Reflect needs the light direction from the light position to vertex position:
    // L - 2.0 * dot(N, L) * N.
@@ -70,12 +72,12 @@ void main()
 
    vec3 ambient = ambientReflection(ambientIntensity, 1.0f, ambientLightColor);
    vec3 diffuse = diffuseReflection(diffuseIntensity,1.0f,pointLightColor,lightDirection,normal);
-   vec3 specular = specularReflection(specularIntensity, 1.0f,pointLightColor, 64.0f, viewDirection, reflectionDirection);
+   vec3 specular = specularReflection(specularIntensity, 1.0f,pointLightColor, hardness, viewDirection, reflectionDirection);
 
    vec3 finalColor = baseColor * color;
 
    if(enableLighting)
-   finalColor *= (ambient + diffuse + specular);
+   finalColor *= (ambient + k*(diffuse + specular));
 
    fragColor = vec4(finalColor, 1.0f);
 }

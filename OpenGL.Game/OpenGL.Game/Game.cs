@@ -1,4 +1,5 @@
-﻿using OpenGL.Mathematics;
+﻿using OpenGL.Game.Components;
+using OpenGL.Mathematics;
 using OpenGL.Platform;
 using System;
 using System.Collections.Generic;
@@ -16,47 +17,96 @@ namespace OpenGL.Game
 
         #endregion Window Parameters
 
-        #region Camera Parameters
+        public bool EnableLighting = true;
+        public Vector3 Color = new Vector3 (1, 1, 1);
 
-        private float movementSpeed = 3.0f;
-        private float rotationSpeed = 5.0f;
-        public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
-        public float RotationSpeed { get => rotationSpeed; set => rotationSpeed = value; }
+        //#region Camera Parameters
 
-        private Vector3 cameraPos = Vector3.Zero;
-        private Vector3 cameraRotation = Vector3.Zero;
-        public Vector3 CameraPos { get => cameraPos; set => cameraPos = value; }
-        public Vector3 CameraRotation { get => cameraRotation; set => cameraRotation = value; }
+        //private float movementSpeed = 3.0f;
+        //private float rotationSpeed = 5.0f;
+        //public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
+        //public float RotationSpeed { get => rotationSpeed; set => rotationSpeed = value; }
 
-        #endregion Camera Parameters
+        //private Vector3 cameraPos = Vector3.Zero;
+        //private Vector3 cameraRotation = Vector3.Zero;
+        //public Vector3 CameraPos { get => cameraPos; set => cameraPos = value; }
+        //public Vector3 CameraRotation { get => cameraRotation; set => cameraRotation = value; }
 
+        //#endregion Camera Parameters
+
+        public Camera MainCamera;
+
+        public List<PointLight> PointLights = new List<PointLight>();
         public List<GameObject> SceneGraph { get; private set; } = new List<GameObject>();
 
         public Game()
         {
+
+        }
+
+        private float ambientIntensity = 0.3f;
+        private Vector3 ambientColor = new Vector3(0.75f, 0.75f, 1.0f);
+        private float hardness = 64.0f;
+        private Matrix4 GetLightDataMatrix()
+        {
+            Matrix4 lightDataMatrix = new Matrix4();
+
+            foreach (var light in PointLights)
+            {
+            lightDataMatrix.SetMatrix
+                (
+                new Vector4(light.Transform.Position, ambientIntensity),
+                new Vector4(ambientColor, light.diffuseIntensity),
+                new Vector4(light.lightColor, light.specularIntensity),
+                new Vector4(MainCamera.Transform.Position, hardness)
+                );
+            }
+             return lightDataMatrix;
         }
 
         public void Render()
         {
+            if(MainCamera==null)
+            {
+                Console.WriteLine("There is no main camera. Please set a main camera for the game before calling Render()");
+                return;
+            }
+
             foreach (var go in SceneGraph)
             {
-                SetTransform(go);
+                if (go.Renderer == null)
+                    return;
+
+                SetUniforms(go);
                 go.Renderer.Render();
             }
         }
 
         public void Update()
         {
+            foreach (var go in SceneGraph)
+            {
+                go.Update();
+            }
         }
 
-        #region Transformation
-
-        private void SetTransform(GameObject obj)
+        private void SetUniforms(GameObject obj)
         {
-            Matrix4 view = GetViewMatrix();
-            Matrix4 projection = GetProjectionMatrix();
+
+            //Tranformation matrices
+            Matrix4 view = MainCamera.GetViewMatrix();
+            Matrix4 projection = MainCamera.GetProjectionMatrix();
             Matrix4 model = obj.Transform.GetSRT();
             Matrix4 tangentToWorld = model.Inverse().Transpose();
+
+            ////Light data
+            //List<Matrix3> lightDatas = new List<Matrix3>();
+            //foreach (var light in PointLights)
+            //{
+            //    lightDatas.Add(light.GetLightData());
+            //}
+
+            var lightData = GetLightDataMatrix();
 
             //--------------------------
             // Data passing to shader
@@ -71,133 +121,32 @@ namespace OpenGL.Game
             //Since we have row based vectors we need the SRT matrix to apply all transformations in local space
             material["model"].SetValue(model);
 
+
             //Since the light object has a different shader that doesn't have a tangent to world uniform, we won't pass it to the light source
-            if (obj.Name != "Light source")
+            if (!obj.HasComponent<PointLight>())
+            {
+                material["color"].SetValue(Color);
+                material["enableLighting"].SetValue(EnableLighting);
                 material["tangentToWorld"].SetValue(tangentToWorld);
+                material["lightData"].SetValue(lightData);
+            }
+            else
+            {
+                material["lightColor"].SetValue(obj.GetComponent<PointLight>().lightColor);
+            }
         }
 
-        private Matrix4 GetViewMatrix()
+        public void ToggleLightingCallback(bool isLPressed)
         {
-            Matrix4 viewTranslation = Matrix4.Identity;
-            Matrix4 viewRotation = Matrix4.Identity;
-            Matrix4 viewScale = Matrix4.Identity;
-
-            viewTranslation = Matrix4.CreateTranslation(CameraPos);
-            Matrix4 viewRotationX = Matrix4.CreateRotation(new Vector3(1.0f, 0.0f, 0.0f), Mathf.ToRad(-CameraRotation.X));
-            Matrix4 viewRotationY = Matrix4.CreateRotation(new Vector3(0.0f, 1.0f, 0.0f), Mathf.ToRad(-CameraRotation.Y));
-            Matrix4 viewRotationZ = Matrix4.CreateRotation(new Vector3(0.0f, 0.0f, 1.0f), Mathf.ToRad(-CameraRotation.Z));
-
-            viewRotation = viewRotationY * viewRotationX;
-
-            viewScale = Matrix4.CreateScaling(new Vector3(1.0f, 1.0f, 1.0f));
-
-            Matrix4 view = viewTranslation * viewRotation * viewScale;// TRS matrix -> scale, rotate then translate -> All applied in LOCAL Coordinates
-
-            return view;
+            if(isLPressed)
+            {
+                ToggleLighting();
+            }
         }
-
-        private Matrix4 GetProjectionMatrix()
+        public void ToggleLighting()
         {
-            float fov = 45;
-
-            float aspectRatio = (float)Width / (float)Height;
-            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(Mathf.ToRad(fov), (float)Width / Height, 0.1f, 1000f);
-            //Matrix4 projection = Matrix4.CreateOrthographic(1, 1, 0.1f, 100.0f);
-
-            return projection;
+            EnableLighting = !EnableLighting;
         }
 
-        #endregion Transformation
-
-        #region Camera
-
-        private Vector3 GetForwardAxis()
-        {
-            var forward = new Vector3(0, 0, 1);
-
-            //forward.x =  cos(pitch) * sin(yaw);
-            //forward.y = -sin(pitch);
-            //forward.z =  cos(pitch) * cos(yaw);
-
-            var pitch = Mathf.ToRad(CameraRotation.X);
-            var yaw = Mathf.ToRad(CameraRotation.Y);
-
-            forward.X = (float)-(Math.Cos(pitch) * Math.Sin(yaw));
-            forward.Y = (float)(Math.Sin(pitch));
-            forward.Z = (float)(Math.Cos(pitch) * Math.Cos(yaw));
-
-            return forward.Normalize();
-        }
-
-        private Vector3 GetUpAxis()
-        {
-            //up.x = sin(pitch) * sin(yaw);
-            //up.y = cos(pitch);
-            //up.z = sin(pitch) * cos(yaw);
-
-            var up = new Vector3(0, 1, 0);
-
-            var pitch = Mathf.ToRad(CameraRotation.X);
-            var yaw = Mathf.ToRad(CameraRotation.Y);
-
-            up.X = (float)-(Math.Sin(pitch) * Math.Sin(yaw));
-            up.Y = (float)-(Math.Cos(pitch));
-            up.Z = (float)(Math.Sin(pitch) * Math.Cos(yaw));
-
-            return up.Normalize();
-        }
-
-        private Vector3 GetRightAxis()
-        {
-            //right.x =  cos(yaw);
-            //right.y =  0;
-            //right.z = -sin(yaw);
-
-            var right = new Vector3(1, 0, 0);
-
-            var yaw = Mathf.ToRad(CameraRotation.Y);
-
-            right.X = (float)(-Math.Cos(yaw));
-            right.Y = 0;
-            right.Z = (float)(-Math.Sin(yaw));
-
-            return right.Normalize();
-        }
-
-        #region Camera Movement
-
-        public void ProcessForwardMovement()
-        {
-            CameraPos += GetForwardAxis() * Time.DeltaTime * MovementSpeed;
-        }
-
-        public void ProcessBackwardsMovement()
-        {
-            CameraPos += -GetForwardAxis() * Time.DeltaTime * MovementSpeed;
-        }
-
-        public void ProcessLeftMovement()
-        {
-            CameraPos += -GetRightAxis() * Time.DeltaTime * MovementSpeed;
-        }
-
-        public void ProcessRightMovement()
-        {
-            CameraPos += GetRightAxis() * Time.DeltaTime * MovementSpeed;
-        }
-
-        public void ProcessUpMovement()
-        {
-            CameraPos += GetUpAxis() * Time.DeltaTime * MovementSpeed;
-        }
-
-        public void ProcessDownMovement()
-        {
-            CameraPos += -GetUpAxis() * Time.DeltaTime * MovementSpeed;
-        }
-
-        #endregion Camera Movement
-
-        #endregion Camera
     }
 }

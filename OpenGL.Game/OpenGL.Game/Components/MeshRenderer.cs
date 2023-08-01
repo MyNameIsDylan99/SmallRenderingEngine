@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 
-namespace OpenGL.Game
+namespace OpenGL.Game.Components
 {
-    public class MeshRenderer
+    public class MeshRenderer : Component
     {
         public VAO Geometry { get; private set; }
         public ShaderProgram Material { get; private set; }
 
         public List<Texture> MeshTextures { get; private set; } = new List<Texture>();
 
-        public MeshRenderer(ShaderProgram material, VAO geometry, List<Texture> textures = null)
+        public MeshRenderer(ShaderProgram material, VAO geometry, List<Texture> textures = null ,GameObject gameObject = null) : base(gameObject)
         {
-            this.Material = material;
-            this.Geometry = geometry;
+            Material = material;
+            Geometry = geometry;
 
             if (textures != null)
-            this.MeshTextures = textures;
+                MeshTextures = textures;
         }
 
         public void Render()
@@ -27,6 +27,10 @@ namespace OpenGL.Game
 
             Geometry.Program.Use();
             Geometry.Draw();
+        }
+
+        public override void OnUpdate()
+        {
         }
     }
 }
