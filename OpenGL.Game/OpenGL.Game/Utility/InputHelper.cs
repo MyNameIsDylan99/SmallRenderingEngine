@@ -210,6 +210,7 @@ public static class InputHelper
         var moveDeltaX = x - lx;
         var moveDeltaY = y - ly;
 
+        //We have to make sure the delta is not too high because then the movement is caused by warp pointer.
         int maxDeltaX = (int)(Window.Width * 0.9);
         int maxDeltaY = ((int)(Window.Height * 0.9));
 

@@ -1,4 +1,5 @@
-﻿using OpenGL.Platform;
+﻿using System;
+using OpenGL.Platform;
 
 namespace OpenGL.Game.Components
 {
@@ -145,50 +146,5 @@ namespace OpenGL.Game.Components
             transform.Rotation += new Vector3(yRotation, xRotation, 0) * Time.DeltaTime * RotationSpeed;
         }
 
-        //#region Selection
-        //public static void MakeControllerActive(MovementController controller)
-        //{
-        //    //Disable the previously selected controller
-        //    currentlySelectedMovementController.MovementEnabled = false;
-        //    currentlySelectedMovementController.RotationEnabled = false;
-
-        //    //Set the controller as selected
-        //    currentlySelectedMovementController = controller;
-        //    currentlySelectedMovementControllerIndex = allMovementControllers.IndexOf(controller);
-
-        //    //Activate the controller
-        //    currentlySelectedMovementController.MovementEnabled = true;
-        //    currentlySelectedMovementController.RotationEnabled = true;
-
-        //    ChangeUITextToSelectedController();
-        //}
-
-        ///// <summary>
-        ///// This method increments the currentlySelectedMovementControllerIndex by 1, selects and makes the next MovementController in the allMovementControllers List active.
-        ///// </summary>
-        ///// <param name="isPressed"></param>
-        //public static void SelectNextMovementController(bool isPressed)
-        //{
-        //    if (!isPressed) return;
-
-        //    currentlySelectedMovementController.MovementEnabled = false;
-        //    currentlySelectedMovementController.RotationEnabled = false;
-        //    currentlySelectedMovementControllerIndex++;
-        //    currentlySelectedMovementController = allMovementControllers[currentlySelectedMovementControllerIndex % allMovementControllers.Count];
-        //    currentlySelectedMovementController.MovementEnabled = true;
-        //    currentlySelectedMovementController.RotationEnabled = true;
-
-        //    ChangeUITextToSelectedController();
-
-        //}
-
-        //private static void ChangeUITextToSelectedController()
-        //{
-        //    if(!game.IsUIInitalized) return;
-
-        //    UserInterfaceHelper.currentlySelectedText.String = currentlySelectedMovementController.gameObject.Name;
-        //}
-
-        //#endregion
     }
 }

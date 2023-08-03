@@ -1,4 +1,5 @@
 ﻿using OpenGL.Platform;
+using System;
 using System.Runtime.InteropServices;
 
 /// <summary>
@@ -81,15 +82,23 @@ public static class CursorRestriction
             return;
 
         if (x == Window.Width - 1)
+        {
             Window.WarpPointer(1, y);
+        }
 
         if (x == 0)
+        {
             Window.WarpPointer(Window.Width - 2, y);
+        }
 
         if (y == Window.Height - 1)
+        {
             Window.WarpPointer(x, 1);
+        }
 
         if (y == 0)
+        {
             Window.WarpPointer(x, Window.Height - 2);
+        }
     }
 }

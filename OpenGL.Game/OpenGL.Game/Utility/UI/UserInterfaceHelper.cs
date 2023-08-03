@@ -26,12 +26,12 @@ public class UserInterfaceHelper
 
     public void SetupUI(int width, int height, Game game)
     {
+        if (IsUIInitalized) return;
+
         OpenGL.UI.UserInterface.InitUI(width, height);
         this.game = game;
 
         topLeftText = new Text(Shaders.FontShader, BMFont.LoadFont("fonts/segoe_ui32.fnt"), "SAE S1 - Demo", BMFont.Justification.Center);
-        //topLeftText = new Text(Text.FontSize._24pt,
-        //"SAE S1 - Demo", BMFont.Justification.Center);
         topLeftText.RelativeTo = Corner.TopLeft;
         topLeftText.Position = new Point(100, 50);
 

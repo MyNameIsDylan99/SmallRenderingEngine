@@ -407,13 +407,13 @@ namespace OpenGL.Platform
             for (int i = 0; i < OnMouseMoveCallbacks.Count && !handled; i++)
                 handled = OnMouseMoveCallbacks[i](x, y);
 
-            if (!handled)
-            {
+            //if (!handled)
+            //{
                 if (Input.MouseMove != null && Input.MouseMove.Move != null)
                     Input.MouseMove.Move(Input.MousePosition.X, Input.MousePosition.Y, x, y);
 
                 Input.MousePosition = new Click(x, y, Input.MousePosition.Button, Input.MousePosition.State);
-            }
+            //}
         }
 
         #endregion Mouse Callbacks
