@@ -1,19 +1,17 @@
-﻿using System;
-
-using OpenGL;
-using OpenGL.Platform;
-
-namespace OpenGL.UI
+﻿namespace OpenGL.UI
 {
     public class Button : UIElement
     {
         #region Properties
+
         public bool Enabled { get; set; }
 
         public Vector4 EnabledColor { get; set; }
-        #endregion
-        
+
+        #endregion Properties
+
         #region Text Support
+
         private Text text;
         private BMFont font;
         private string textString;
@@ -46,9 +44,11 @@ namespace OpenGL.UI
                 else text.String = textString;
             }
         }
-        #endregion
+
+        #endregion Text Support
 
         #region Constructors
+
         public Button(Texture texture)
         {
             this.BackgroundColor = Vector4.Zero;
@@ -67,9 +67,11 @@ namespace OpenGL.UI
             this.RelativeTo = Corner.TopLeft;
             this.Size = new Point(width, height);
         }
-        #endregion
+
+        #endregion Constructors
 
         #region UIElement Overrides (OnResize, Dispose, Draw)
+
         public override void OnResize()
         {
             if (text != null) text.Size = this.Size;
@@ -95,6 +97,7 @@ namespace OpenGL.UI
                 text.Draw();
             }
         }
-        #endregion
+
+        #endregion UIElement Overrides (OnResize, Dispose, Draw)
     }
 }

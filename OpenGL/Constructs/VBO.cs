@@ -1,9 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using ObjLoader.Loader.Data.VertexData;
+using OpenGL.Constructs;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using OpenGL.Constructs;
-using ObjLoader.Loader.Data.VertexData;
+using System.Runtime.InteropServices;
 
 #if USE_NUMERICS
 using System.Numerics;
@@ -15,6 +15,7 @@ namespace OpenGL
         where T : struct
     {
         #region Private Fields
+
         /// <summary>
         /// A collection of types and their respective number of components per generic vertex attribute.
         /// </summary>
@@ -77,10 +78,13 @@ namespace OpenGL
             typeof(int),
             typeof(uint),
         };
-        #endregion
+
+        #endregion Private Fields
 
         #region Properties
+
 #pragma warning disable IDE1006
+
         /// <summary>
         /// The ID of the vertex buffer object.
         /// </summary>
@@ -93,6 +97,7 @@ namespace OpenGL
                 ID = value;
             }
         }
+
 #pragma warning restore
 
         /// <summary>
@@ -128,8 +133,8 @@ namespace OpenGL
 
         /// <summary>
         /// Specifies whether fixed-point data values should be normalized (true) or converted directly as fixed-point values (false) when they are accessed.
-        /// If normalized is set to true, it indicates that values stored in an integer format are to be mapped to the range [-1,1] (for signed values) 
-        /// or [0,1] (for unsigned values) when they are accessed and converted to floating point. 
+        /// If normalized is set to true, it indicates that values stored in an integer format are to be mapped to the range [-1,1] (for signed values)
+        /// or [0,1] (for unsigned values) when they are accessed and converted to floating point.
         /// Otherwise, values will be converted to floats directly without normalization.
         /// </summary>
         public bool Normalize { get; set; } = true;
@@ -143,9 +148,11 @@ namespace OpenGL
         /// Specifies whether the VBO contains an integral type.
         /// </summary>
         public bool IsIntegralType { get; }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor and Destructor
+
         /// <summary>
         /// Creates a buffer object of type T with a specified length.
         /// This allows the array T[] to be larger than the actual size necessary to buffer.
@@ -256,9 +263,11 @@ namespace OpenGL
         {
             Dispose(false);
         }
-        #endregion
+
+        #endregion Constructor and Destructor
 
         #region BufferSubData
+
         /// <summary>
         /// Updates a subset of the buffer object's data store.
         /// </summary>
@@ -303,9 +312,11 @@ namespace OpenGL
                 handle.Free();
             }
         }
-        #endregion
+
+        #endregion BufferSubData
 
         #region IDisposable
+
         /// <summary>
         /// Deletes this buffer from GPU memory.
         /// </summary>
@@ -323,8 +334,10 @@ namespace OpenGL
                 ID = 0;
             }
         }
-        #endregion
+
+        #endregion IDisposable
     }
+
     public class DuplicatingVBO<T> : VBO<T>
         where T : struct
     {
@@ -392,6 +405,7 @@ namespace OpenGL
         }
 
         #region Methods
+
         /// <summary>
         /// Returns the value of VBO<T> in an array
         /// </summary>
@@ -400,6 +414,7 @@ namespace OpenGL
         {
             return new ReadOnlyCollection<T>(values);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

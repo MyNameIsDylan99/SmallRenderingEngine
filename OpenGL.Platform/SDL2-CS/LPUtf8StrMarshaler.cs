@@ -33,8 +33,8 @@
 //    https://www.github.com/giawa/opengl4csharp
 
 using System;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace SDL2
 {
@@ -47,54 +47,55 @@ namespace SDL2
 #endif
 
     internal class LPUtf8StrMarshaler : ICustomMarshaler
-	{
-		public const string LeaveAllocated = "LeaveAllocated";
+    {
+        public const string LeaveAllocated = "LeaveAllocated";
 
-		private static ICustomMarshaler
-			_leaveAllocatedInstance = new LPUtf8StrMarshaler(true),
-			_defaultInstance = new LPUtf8StrMarshaler(false);
+        private static ICustomMarshaler
+            _leaveAllocatedInstance = new LPUtf8StrMarshaler(true),
+            _defaultInstance = new LPUtf8StrMarshaler(false);
 
-		public static ICustomMarshaler GetInstance(string cookie)
-		{
-			switch (cookie)
-			{
-			case "LeaveAllocated":
-				return _leaveAllocatedInstance;
-			default:
-				return _defaultInstance;
-			}
-		}
+        public static ICustomMarshaler GetInstance(string cookie)
+        {
+            switch (cookie)
+            {
+                case "LeaveAllocated":
+                    return _leaveAllocatedInstance;
 
-		private bool _leaveAllocated;
+                default:
+                    return _defaultInstance;
+            }
+        }
 
-		public LPUtf8StrMarshaler(bool leaveAllocated)
-		{
-			_leaveAllocated = leaveAllocated;
-		}
+        private bool _leaveAllocated;
 
-		public object MarshalNativeToManaged(IntPtr pNativeData)
-		{
-			if (pNativeData == IntPtr.Zero)
-				return null;
+        public LPUtf8StrMarshaler(bool leaveAllocated)
+        {
+            _leaveAllocated = leaveAllocated;
+        }
+
+        public object MarshalNativeToManaged(IntPtr pNativeData)
+        {
+            if (pNativeData == IntPtr.Zero)
+                return null;
 
             int length = 0;
             while (Marshal.ReadByte((IntPtr)(pNativeData + length)) != 0) length++;
 
             byte[] bytes = new byte[length];
-			Marshal.Copy(pNativeData, bytes, 0, bytes.Length);
-			return Encoding.UTF8.GetString(bytes);
-		}
+            Marshal.Copy(pNativeData, bytes, 0, bytes.Length);
+            return Encoding.UTF8.GetString(bytes);
+        }
 
-		public IntPtr MarshalManagedToNative(object ManagedObj)
-		{
-			if (ManagedObj == null)
-				return IntPtr.Zero;
+        public IntPtr MarshalManagedToNative(object ManagedObj)
+        {
+            if (ManagedObj == null)
+                return IntPtr.Zero;
 
-			var str = ManagedObj as string;
-			if (str == null)
-			{
-				throw new ArgumentException("ManagedObj must be a string.", "ManagedObj");
-			}
+            var str = ManagedObj as string;
+            if (str == null)
+            {
+                throw new ArgumentException("ManagedObj must be a string.", "ManagedObj");
+            }
 
             byte[] utfBytes = Encoding.UTF8.GetBytes(str);
             byte[] bytes = new byte[utfBytes.Length + 1];
@@ -103,24 +104,24 @@ namespace SDL2
             var mem = SDL.SDL_malloc((IntPtr)bytes.Length);
             Marshal.Copy(bytes, 0, mem, bytes.Length);
 
-			return mem;
-		}
+            return mem;
+        }
 
-		public void CleanUpManagedData(object ManagedObj)
-		{
-		}
+        public void CleanUpManagedData(object ManagedObj)
+        {
+        }
 
-		public void CleanUpNativeData(IntPtr pNativeData)
-		{
-			if (!_leaveAllocated)
-			{
-				SDL.SDL_free(pNativeData);
-			}
-		}
+        public void CleanUpNativeData(IntPtr pNativeData)
+        {
+            if (!_leaveAllocated)
+            {
+                SDL.SDL_free(pNativeData);
+            }
+        }
 
-		public int GetNativeDataSize ()
-		{
-			return -1;
-		}
-	}
+        public int GetNativeDataSize()
+        {
+            return -1;
+        }
+    }
 }

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 namespace OpenGL
 {
     #region Simple Memory Logging for Debugging
+
 #if MEMORY_LOGGER
     public static class MemoryLogger
     {
@@ -87,31 +88,38 @@ namespace OpenGL
         }
     }
 #endif
-    #endregion
+
+    #endregion Simple Memory Logging for Debugging
 
     /// <summary>
     /// Bindings to OpenGL 4.5 methods as well as some helper shortcuts.
     /// </summary>
-    partial class Gl
+    public partial class Gl
     {
         #region Preallocated Memory
+
         // pre-allocate the float[] for matrix and array data
         private static float[] float1 = new float[1];
+
         private static float[] matrix4Float = new float[16];
         private static float[] matrix3Float = new float[9];
         private static double[] double1 = new double[1];
         private static uint[] uint1 = new uint[1];
         private static int[] int1 = new int[1];
         private static bool[] bool1 = new bool[1];
-        #endregion
+
+        #endregion Preallocated Memory
 
         #region Private Fields
+
         private static int version = 0;
         private static int versionMinor = 0;
         private static uint currentProgram = 0;
-        #endregion
+
+        #endregion Private Fields
 
         #region Public Properties
+
         /// <summary>
         /// Gets the program ID of the currently active shader program.
         /// </summary>
@@ -120,9 +128,11 @@ namespace OpenGL
         {
             get { return currentProgram; }
         }
-        #endregion
+
+        #endregion Public Properties
 
         #region OpenGL Helpers (Type Safe Equivalents or Shortcuts)
+
         /// <summary>
         /// Select active texture unit.
         /// <para>
@@ -132,7 +142,7 @@ namespace OpenGL
         /// </summary>
         /// <param name="texture">
         /// Specifies which texture unit to make active. The number of texture units is implementation
-        /// dependent, but must be at least 80. texture must be a value between 0 and 
+        /// dependent, but must be at least 80. texture must be a value between 0 and
         /// GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS minus one. The initial value is 0.
         /// </param>
         public static void ActiveTexture(int texture)
@@ -865,6 +875,7 @@ namespace OpenGL
                 handle.Free();
             }
         }
-        #endregion
+
+        #endregion OpenGL Helpers (Type Safe Equivalents or Shortcuts)
     }
 }

@@ -337,15 +337,18 @@ namespace OpenGL
     public class GenericVAO : IDisposable
     {
         #region Private Fields
+
         private static readonly Dictionary<VertexAttribPointerType, DrawElementsType> ValidElementTypes = new Dictionary<VertexAttribPointerType, DrawElementsType>()
         {
             [VertexAttribPointerType.UnsignedByte] = DrawElementsType.UnsignedByte,
             [VertexAttribPointerType.UnsignedShort] = DrawElementsType.UnsignedShort,
             [VertexAttribPointerType.UnsignedInt] = DrawElementsType.UnsignedInt
         };
-        #endregion
+
+        #endregion Private Fields
 
         #region Generic VBO
+
         public IGenericVBO[] vbos;
 
         public struct GenericVBO<T> : IGenericVBO
@@ -401,9 +404,11 @@ namespace OpenGL
                 }
             }
         }
-        #endregion
+
+        #endregion Generic VBO
 
         #region Constructor and Destructor
+
         public GenericVAO(ShaderProgram program)
         {
             Program = program;
@@ -455,16 +460,20 @@ namespace OpenGL
         {
             Dispose(false);
         }
-        #endregion
+
+        #endregion Constructor and Destructor
 
         #region Properties
+
         private bool disposeChildren = false;
         private DrawElementsType elementType;
-        public DrawElementsType ElementType { get { return elementType; } }
+        public DrawElementsType ElementType
+        { get { return elementType; } }
         private bool allowIntAsElementType = true;
         private int offset = 0;
         private IntPtr offsetInBytes = IntPtr.Zero;
-        public IntPtr OffsetInBytes { get { return offsetInBytes; } }
+        public IntPtr OffsetInBytes
+        { get { return offsetInBytes; } }
 
         /// <summary>
         /// The offset into the element array buffer that this VAO begins.
@@ -513,34 +522,41 @@ namespace OpenGL
         public BeginMode DrawMode { get; set; }
 
 #pragma warning disable IDE1006
+
         /// <summary>
         /// The ID of this Vertex Array Object for use in calls to OpenGL.
         /// </summary>
         [Obsolete("Use ID instead.")]
         public uint vaoID
         {
-             get { return ID; }
+            get { return ID; }
             private set { ID = value; }
         }
+
 #pragma warning restore
 
         /// <summary>
         /// The ID of this Vertex Array Object for use in calls to OpenGL.
         /// </summary>
         public uint ID { get; private set; }
-        #endregion
+
+        #endregion Properties
 
         #region Draw Methods (OGL2 and OGL3)
+
         private int GetElementSizeInBytes()
         {
             switch (elementType)
             {
                 case DrawElementsType.UnsignedByte:
                     return 1;
+
                 case DrawElementsType.UnsignedShort:
                     return 2;
+
                 case DrawElementsType.UnsignedInt:
                     return 4;
+
                 default:
                     throw new Exception($"Unknown enum value. Expected an enum of type {nameof(DrawElementsType)}.");
             }
@@ -621,7 +637,9 @@ namespace OpenGL
         }
 
         public delegate void DrawFunc();
+
         public delegate void DrawInstancedFunc(int count);
+
         public delegate void MultiDrawElementsIndirectFunc(VBO<DrawElementsIndirectCommand> cmdVBO, int cmdCount);
 
         public DrawFunc Draw;
@@ -697,9 +715,11 @@ namespace OpenGL
             BindAttributes(program);
             Gl.DrawElements(DrawMode, VertexCount, elementType, offsetInBytes);
         }
-        #endregion
+
+        #endregion Draw Methods (OGL2 and OGL3)
 
         #region IDisposable
+
         /// <summary>
         /// Deletes the vertex array from the GPU and will also dispose of any child VBOs if (DisposeChildren == true).
         /// </summary>
@@ -729,12 +749,14 @@ namespace OpenGL
                 }
             }
         }
-        #endregion
+
+        #endregion IDisposable
     }
 
     public class VAO : GenericVAO, IDisposable
     {
         #region Constructors and Destructor
+
         [Obsolete("Use VBO<uint> instead of VBO<int> as the element array buffer.")]
         public VAO(ShaderProgram program, VBO<Vector3> vertex, VBO<int> element)
             : this(program, vertex, null, null, null, element)
@@ -828,6 +850,7 @@ namespace OpenGL
         {
             Dispose(false);
         }
-        #endregion
+
+        #endregion Constructors and Destructor
     }
 }

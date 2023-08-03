@@ -15,7 +15,6 @@
         /// </summary>
         public const float TWO_PI = 6.28318530717958647692528676654f;
 
-
         /// <summary>
         ///   <para>Linearly interpolates between a and b by t.</para>
         /// </summary>

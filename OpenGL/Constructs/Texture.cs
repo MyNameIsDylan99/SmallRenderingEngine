@@ -1,14 +1,15 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace OpenGL
 {
     public class Texture : IDisposable
     {
         #region Propreties
+
         public string Filename { get; private set; }
 
         public uint TextureID { get; private set; }
@@ -16,9 +17,11 @@ namespace OpenGL
         public Size Size { get; private set; }
 
         public TextureTarget TextureTarget { get; private set; }
-        #endregion
+
+        #endregion Propreties
 
         #region Constructors
+
         /// <summary>
         /// Create a texture from the supplied filename.
         /// Any files that Bitmap.FromFile can open are supported.
@@ -38,6 +41,7 @@ namespace OpenGL
                 case ".dds":
                     LoadDDS(filename);
                     break;
+
                 default:
                     LoadBitmap(filename);
                     break;
@@ -71,11 +75,13 @@ namespace OpenGL
 
         ~Texture()
         {
-            Dispose(false);
+            //Dispose(false);
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         public void Dispose()
         {
             Dispose(true);
@@ -156,16 +162,19 @@ namespace OpenGL
                         factor = 2;
                         blocksize = 8;
                         break;
+
                     case "DXT3":    // DXT3 compression ratio is 4:1
                         format = PixelInternalFormat.CompressedRgbaS3tcDxt3Ext;
                         factor = 4;
                         blocksize = 16;
                         break;
+
                     case "DXT5":    // DXT5 compression ratio is 4:1
                         format = PixelInternalFormat.CompressedRgbaS3tcDxt5Ext;
                         factor = 4;
                         blocksize = 16;
                         break;
+
                     default:
                         compressed = false;
                         if (imageData.PixelFormat.ABitMask == 0xf000 && imageData.PixelFormat.RBitMask == 0x0f00 &&
@@ -235,34 +244,44 @@ namespace OpenGL
                 }
             }
         }
-        #endregion
+
+        #endregion Methods
     }
 
     internal class DDS
     {
         #region DirectDraw Surface
+
         /// <summary>The DirectDraw Surface pixel format.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct DDS_PIXEL_FORMAT
         {
             /// <summary>Size of the DDS_PIXEL_FORMAT structure.</summary>
             public int Size;
+
             /// <summary>Pixel format flags.</summary>
             public int Flags;
+
             /// <summary>The FourCC code for compression identification.</summary>
             public string FourCC { get { return string.Format("{0}{1}{2}{3}", fourCC0, fourCC1, fourCC2, fourCC3); } }
+
             public char fourCC0;
             public char fourCC1;
             public char fourCC2;
             public char fourCC3;
+
             /// <summary>The number of bits per pixel.</summary>
             public int RGBBitCount;
+
             /// <summary>Red bit mask.</summary>
             public int RBitMask;
+
             /// <summary>Green bit mask.</summary>
             public int GBitMask;
+
             /// <summary>Blue bit mask.</summary>
             public int BBitMask;
+
             /// <summary>Alpha bit mask.</summary>
             public int ABitMask;
         }
@@ -273,18 +292,25 @@ namespace OpenGL
         {
             /// <summary>The size of the DDSURFACEDESC2 structure.</summary>
             public int Size;
+
             /// <summary>Flags to determine which fields are valid.</summary>
             public int Flags;
+
             /// <summary>The height (in pixels) of the surface.</summary>
             public int Height;
+
             /// <summary>The width (in pixels) of the surface.</summary>
             public int Width;
+
             /// <summary>The scan line size of the surface.</summary>
             public int LinearSize;
+
             /// <summary>The depth (if applicable).</summary>
             public int Depth;
+
             /// <summary>The number of mip map levels in this surface.</summary>
             public int MipmapCount;
+
             private int Reserved0;
             private int Reserved1;
             private int Reserved2;
@@ -296,12 +322,16 @@ namespace OpenGL
             private int Reserved8;
             private int Reserved9;
             private int Reserved10;
+
             /// <summary>A pixel format describing the surface.</summary>
             public DDS_PIXEL_FORMAT PixelFormat;
+
             /// <summary>DDS surface flags.</summary>
             public int SurfaceFlags;
+
             /// <summary>DDS cubemap flags.</summary>
             public int CubemapFlags;
+
             private int Reserved11;
             private int Reserved12;
             private int Reserved13;
@@ -315,6 +345,7 @@ namespace OpenGL
                 return desc;
             }
         }
-        #endregion
+
+        #endregion DirectDraw Surface
     }
 }

@@ -12,8 +12,10 @@ namespace OpenGL.Platform
     {
         /// <summary>The left mouse button is a valid chord modifier for input.</summary>
         Left = 1,
+
         /// <summary>The right mouse button is a valid chord modifier for input.</summary>
         Right = 3,
+
         /// <summary>The middle mouse button is a valid chord modifier for input.</summary>
         Middle = 2
     }
@@ -81,6 +83,7 @@ namespace OpenGL.Platform
     public struct Click
     {
         #region Fields
+
         /// <summary>
         /// The x-location of the mouse wrt the top-left.
         /// </summary>
@@ -100,9 +103,11 @@ namespace OpenGL.Platform
         /// True if the mouse button has been pressed, false if it has been released.
         /// </summary>
         public MouseState State;
-        #endregion
+
+        #endregion Fields
 
         #region Methods
+
         /// <summary>
         /// A new click object with x, y and button data.
         /// </summary>
@@ -128,7 +133,8 @@ namespace OpenGL.Platform
         /// <param name="right">True if the right button is pressed.</param>
         /// <param name="pressed">True if the mouse has been pressed, false if released.</param>
         public Click(int x, int y, bool left, bool middle, bool right, bool pressed) :
-            this(x, y, (left ? MouseButton.Left : (right ? MouseButton.Right : MouseButton.Middle)), pressed ? MouseState.Down : MouseState.Up) { }
+            this(x, y, (left ? MouseButton.Left : (right ? MouseButton.Right : MouseButton.Middle)), pressed ? MouseState.Down : MouseState.Up)
+        { }
 
         /// <summary>
         /// A new click object with button data.
@@ -147,6 +153,7 @@ namespace OpenGL.Platform
         {
             return string.Format("Mouse at {0},{1} and is {2}.", X, Y, State);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

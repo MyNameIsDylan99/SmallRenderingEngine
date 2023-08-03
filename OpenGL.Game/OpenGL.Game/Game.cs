@@ -1,6 +1,4 @@
 ﻿using OpenGL.Game.Components;
-using OpenGL.Mathematics;
-using OpenGL.Platform;
 using System;
 using System.Collections.Generic;
 
@@ -17,56 +15,51 @@ namespace OpenGL.Game
 
         #endregion Window Parameters
 
+        public UserInterfaceHelper UserInterfaceHelper;
+
+        private Vector3 directionalLight = new Vector3(0, -1, 0);
+        private Vector3 directionalColor = new Vector3(0, 1, 0);
+        private bool useDirectionalLight = false;
+
         public bool EnableLighting = true;
-        public Vector3 Color = new Vector3 (1, 1, 1);
 
-        //#region Camera Parameters
-
-        //private float movementSpeed = 3.0f;
-        //private float rotationSpeed = 5.0f;
-        //public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
-        //public float RotationSpeed { get => rotationSpeed; set => rotationSpeed = value; }
-
-        //private Vector3 cameraPos = Vector3.Zero;
-        //private Vector3 cameraRotation = Vector3.Zero;
-        //public Vector3 CameraPos { get => cameraPos; set => cameraPos = value; }
-        //public Vector3 CameraRotation { get => cameraRotation; set => cameraRotation = value; }
-
-        //#endregion Camera Parameters
+        //Global shader color
+        public Vector3 Color = new Vector3(1, 1, 1);
 
         public Camera MainCamera;
 
         public List<PointLight> PointLights = new List<PointLight>();
         public List<GameObject> SceneGraph { get; private set; } = new List<GameObject>();
 
-        public Game()
+        public Game(UserInterfaceHelper userInterfaceHelper)
         {
-
+            this.UserInterfaceHelper = userInterfaceHelper;
         }
 
         private float ambientIntensity = 0.3f;
         private Vector3 ambientColor = new Vector3(0.75f, 0.75f, 1.0f);
         private float hardness = 64.0f;
+
         private Matrix4 GetLightDataMatrix()
         {
             Matrix4 lightDataMatrix = new Matrix4();
 
             foreach (var light in PointLights)
             {
-            lightDataMatrix.SetMatrix
-                (
-                new Vector4(light.Transform.Position, ambientIntensity),
-                new Vector4(ambientColor, light.diffuseIntensity),
-                new Vector4(light.lightColor, light.specularIntensity),
-                new Vector4(MainCamera.Transform.Position, hardness)
-                );
+                lightDataMatrix.SetMatrix
+                    (
+                    new Vector4(light.Transform.Position, ambientIntensity),
+                    new Vector4(ambientColor, light.diffuseIntensity),
+                    new Vector4(light.lightColor, light.specularIntensity),
+                    new Vector4(MainCamera.Transform.Position, hardness)
+                    );
             }
-             return lightDataMatrix;
+            return lightDataMatrix;
         }
 
         public void Render()
         {
-            if(MainCamera==null)
+            if (MainCamera == null)
             {
                 Console.WriteLine("There is no main camera. Please set a main camera for the game before calling Render()");
                 return;
@@ -92,7 +85,6 @@ namespace OpenGL.Game
 
         private void SetUniforms(GameObject obj)
         {
-
             //Tranformation matrices
             Matrix4 view = MainCamera.GetViewMatrix();
             Matrix4 projection = MainCamera.GetProjectionMatrix();
@@ -121,7 +113,6 @@ namespace OpenGL.Game
             //Since we have row based vectors we need the SRT matrix to apply all transformations in local space
             material["model"].SetValue(model);
 
-
             //Since the light object has a different shader that doesn't have a tangent to world uniform, we won't pass it to the light source
             if (!obj.HasComponent<PointLight>())
             {
@@ -129,6 +120,9 @@ namespace OpenGL.Game
                 material["enableLighting"].SetValue(EnableLighting);
                 material["tangentToWorld"].SetValue(tangentToWorld);
                 material["lightData"].SetValue(lightData);
+                material["directionalLight"].SetValue(directionalLight);
+                material["directionalColor"].SetValue(directionalColor);
+                material["useDirectional"].SetValue(useDirectionalLight);
             }
             else
             {
@@ -138,15 +132,25 @@ namespace OpenGL.Game
 
         public void ToggleLightingCallback(bool isLPressed)
         {
-            if(isLPressed)
+            if (isLPressed)
             {
                 ToggleLighting();
             }
         }
+
         public void ToggleLighting()
         {
             EnableLighting = !EnableLighting;
+
+            if (EnableLighting)
+                UserInterfaceHelper.lightingOnText.String = "Lighting on";
+            else
+                UserInterfaceHelper.lightingOnText.String = "Lighting off";
         }
 
+        public void ToggleDirectionalLighting()
+        {
+            useDirectionalLight = !useDirectionalLight;
+        }
     }
 }

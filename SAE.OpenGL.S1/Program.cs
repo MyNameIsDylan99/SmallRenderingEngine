@@ -1,29 +1,22 @@
 ﻿using ObjLoader.Loader.Data.VertexData;
 using ObjLoader.Loader.Loaders;
 using OpenGL;
-using static OpenGL.GenericVAO;
 using OpenGL.Game;
-using OpenGL.Platform;
 using OpenGL.Game.Components;
+using OpenGL.Platform;
+using static OpenGL.GenericVAO;
 
 namespace SAEOpenGL.S1
 {
     internal static class Program
     {
-        private static Game game = new Game();
+        private static Game game;
+        private static UserInterfaceHelper userInterfaceHelper = new UserInterfaceHelper();
 
         private static int Width { get => game.Width; set => game.Width = value; }
         private static int Height { get => game.Height; set => game.Height = value; }
 
         private static bool controlLight = false;
-
-        #region Shader Parameters
-
-
-
-
-
-        #endregion
 
         #region Cube
 
@@ -203,6 +196,9 @@ namespace SAEOpenGL.S1
 
         private static void Main()
         {
+
+            game = new Game(userInterfaceHelper);
+
             Window.CreateWindow("OpenGL S1", Width, Height);
             Time.Init();
 
@@ -215,11 +211,13 @@ namespace SAEOpenGL.S1
             //General OpenGL Settings
             SetupOpenGLSettings();
 
+            //User Interface
+            userInterfaceHelper.SetupUI(Width, Height, game);
+
             // Load shader files
             var cottageMaterial = ShaderProgram.Create("shaders\\cottageVert.vs", "shaders\\cottageFrag.fs");
             var gearMaterial = ShaderProgram.Create("shaders\\gearVert.vs", "shaders\\gearFrag.fs");
             var lightMaterial = ShaderProgram.Create("shaders/vertLight.vs", "shaders/fragLight.fs");
-
 
             //Load the textures
             List<OpenGL.Texture> cottageTextures = new List<OpenGL.Texture>();
@@ -231,7 +229,7 @@ namespace SAEOpenGL.S1
             cottageTextures.Add(alphaTexture);
 
             List<OpenGL.Texture> gearTextures = new List<OpenGL.Texture>();
-            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_BaseColor.png")); 
+            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_BaseColor.png"));
 
             //Setting the values of the sampler2Ds to their respective texture unit
             //Texture unit 0 = baseColorMap (diffuseColor)
@@ -245,17 +243,11 @@ namespace SAEOpenGL.S1
 
             //Do the same for gearMaterial
             //Texture unit 0 = baseColorMap (diffuseColor)
-
             baseColor = OpenGL.Gl.GetUniformLocation(gearMaterial.ProgramID, "textureSampler");
 
             OpenGL.Gl.ProgramUniform1i(gearMaterial.ProgramID, baseColor, 0);
 
-            //Setup lightMaterial
-            //lightMaterial.Use();
-            //lightMaterial["lightColor"].SetValue(lightColor);
-
             //Creating the vaos for the obj models
-
             LoadObjFile("models/Gear1.obj", out List<Vertex> vertices, out List<ObjLoader.Loader.Data.VertexData.Texture> uvs, out List<Normal> normals, out List<uint> indices);
 
             var geo_gear = CreateVAO(vertices.ToArray(), uvs.ToArray(), normals.ToArray(), indices.ToArray(), gearMaterial);
@@ -275,26 +267,28 @@ namespace SAEOpenGL.S1
             var geo_light = new VAO(lightMaterial, vbo_light);
 
             //Create game object
-            var lightObject = new GameObject("Light source", new MeshRenderer(lightMaterial, geo_light));
+            GameObject cameraObject = new GameObject("Camera", game);
+            MovementControllerManager movementControllerManager = new MovementControllerManager(cameraObject);
+            Camera cameraComponent = new Camera(cameraObject);
+            MovementController cameraController = new MovementController(cameraObject);
+            movementControllerManager.MakeControllerActive(cameraController);
+
+            var lightObject = new GameObject("Light source", game, new MeshRenderer(lightMaterial, geo_light));
             PointLight pointLight = new PointLight(lightObject);
             MovementController lightController = new MovementController(lightObject, true);
 
-            GameObject obj_cottage = new GameObject("Cottage", new MeshRenderer(cottageMaterial, geo_cottage, cottageTextures));
-            GameObject obj_gear = new GameObject("Gear", new MeshRenderer(gearMaterial, geo_gear, gearTextures));
+            GameObject obj_cottage = new GameObject("Cottage", game, new MeshRenderer(cottageMaterial, geo_cottage, cottageTextures));
+            GameObject obj_gear = new GameObject("Gear", game, new MeshRenderer(gearMaterial, geo_gear, gearTextures));
 
             obj_cottage.Transform.Position = new Vector3(0, 0, -10);
             obj_cottage.Transform.Scale = new Vector3(0.5f, 0.5f, 0.5f);
 
-            obj_gear.Transform.Position = new Vector3(6,0,-10);
+            obj_gear.Transform.Position = new Vector3(6, 0, -10);
             obj_gear.Transform.Scale = new Vector3(0.3f, 0.3f, 0.3f);
 
             lightObject.Transform.Position = new Vector3(0, 0, 0);
             lightObject.Transform.Scale = new Vector3(0.2f, 0.2f, 0.2f);
             lightObject.Transform.Rotation = new Vector3(0.0f, 0.0f, 0.0f);
-
-            GameObject cameraObject = new GameObject("Camera");
-            Camera cameraComponent = new Camera(cameraObject);
-            MovementController cameraController = new MovementController(cameraObject);
 
             game.MainCamera = cameraComponent;
             game.PointLights.Add(pointLight);
@@ -304,9 +298,6 @@ namespace SAEOpenGL.S1
             game.SceneGraph.Add(obj_gear);
             game.SceneGraph.Add(lightObject);
             game.SceneGraph.Add(cameraObject);
-
-            //User Interface
-            UserInterfaceHelper.SetupUI(Width,Height);
 
             //Hook input callbacks
             InputHelper.InitInputs();
@@ -337,7 +328,6 @@ namespace SAEOpenGL.S1
             }
         }
 
-
         #region Other Callbacks
 
         private static void OnResize()
@@ -346,7 +336,7 @@ namespace SAEOpenGL.S1
             Height = Window.Height;
 
             var windowPosition = Window.GetWindowPosition();
-            CursorRestriction.RestrictCursorToRectangle((int)windowPosition.X, (int)windowPosition.Y, (int)windowPosition.X + Width, (int)windowPosition.Y + Height);
+            //CursorRestriction.RestrictCursorToRectangle((int)windowPosition.X, (int)windowPosition.Y, (int)windowPosition.X + Width, (int)windowPosition.Y + Height);
 
             OpenGL.UI.UserInterface.OnResize(Window.Width, Window.Height);
         }
@@ -363,7 +353,6 @@ namespace SAEOpenGL.S1
             // set up the OpenGL viewport and clear both the color and depth bits
             Gl.Viewport(0, 0, Window.Width, Window.Height);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
         }
 
         private static void OnPostRenderFrame()
@@ -395,6 +384,7 @@ namespace SAEOpenGL.S1
         #endregion Other Callbacks
 
         #region ObjLoading
+
         private static void LoadObjFile(string path, out List<Vertex> outputVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> outputTextures, out List<Normal> outputNormals, out List<uint> outputIndices)
         {
             //load obj file
@@ -506,9 +496,10 @@ namespace SAEOpenGL.S1
                 }
             }
             Console.WriteLine();
-            Console.WriteLine("Successfully loaded obj-Model from: " + path );
+            Console.WriteLine("Successfully loaded obj-Model from: " + path);
         }
-        #endregion
+
+        #endregion ObjLoading
 
         #region OpenGL-HelperMethods
 
@@ -525,6 +516,7 @@ namespace SAEOpenGL.S1
 
             return new VAO(material, vbo_model);
         }
+
         private static VAO CreateVAO(Vertex[] vertices, ObjLoader.Loader.Data.VertexData.Texture[] uvs, Normal[] normals, uint[] indices, ShaderProgram material)
         {
             List<IGenericVBO> vbos_model = new List<IGenericVBO>();
@@ -541,7 +533,6 @@ namespace SAEOpenGL.S1
 
         private static void SetupOpenGLSettings()
         {
-
             //Enable depth testing to ensure correct z-ordering of our fragments
             Gl.Enable(EnableCap.DepthTest);
             Gl.Enable(EnableCap.Blend);
@@ -555,10 +546,8 @@ namespace SAEOpenGL.S1
             // Scale down (minify)
             Gl.TexParameteri(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
             TextureParameter.Nearest);
-
         }
 
-        #endregion
-
+        #endregion OpenGL-HelperMethods
     }
 }

@@ -5,23 +5,29 @@ namespace OpenGL.Platform
     public static class NativeMethods
     {
         #region DllImport
+
         [DllImport("/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/CoreGraphics.framework/CoreGraphics")]
         private static extern void CGSetLocalEventsSuppressionInterval(double seconds);
-        #endregion
+
+        #endregion DllImport
 
         #region Delegates
+
         public static void CGSetLocalEventsSuppressionIntervalEmpty(double seconds)
         {
         }
 
         public delegate void CGSetLocalEventsDelegate(double seconds);
+
         public delegate bool wglSwapIntervalEXT(int interval);
 
         public static CGSetLocalEventsDelegate CGSetLocalEventsDelegateOSIndependent;
         public static wglSwapIntervalEXT wglSwapInterval;
-        #endregion
+
+        #endregion Delegates
 
         #region Public Methods
+
         static NativeMethods()
         {
             if (Compatibility.IsWindows())
@@ -37,6 +43,7 @@ namespace OpenGL.Platform
                 CGSetLocalEventsDelegateOSIndependent = NativeMethods.CGSetLocalEventsSuppressionIntervalEmpty;
             }
         }
-        #endregion
+
+        #endregion Public Methods
     }
 }

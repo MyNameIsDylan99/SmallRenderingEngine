@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-
-using OpenGL;
-
-namespace OpenGL.UI
+﻿namespace OpenGL.UI
 {
     /// <summary>
     /// The BMFont class can be used to load both the texture and data files associated with
@@ -311,10 +305,10 @@ namespace OpenGL.UI
             CreateStringInternal(text, color, justification, scale);
 
             // Create the vertex buffer objects and then create the array object
-            return new VAO<Vector3, Vector2>(program, 
-                new VBO<Vector3>(vertices, text.Length * 4), 
-                new VBO<Vector2>(uvs, text.Length * 4), 
-                new string[] { "in_position", "in_uv" }, 
+            return new VAO<Vector3, Vector2>(program,
+                new VBO<Vector3>(vertices, text.Length * 4),
+                new VBO<Vector2>(uvs, text.Length * 4),
+                new string[] { "in_position", "in_uv" },
                 new VBO<int>(indices, text.Length * 6, BufferTarget.ElementArrayBuffer));
         }
     }

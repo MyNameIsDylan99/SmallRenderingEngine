@@ -1,13 +1,11 @@
-﻿using System;
-
-using OpenGL;
-using OpenGL.Platform;
+﻿using OpenGL.Platform;
 
 namespace OpenGL.UI
 {
     public class ColorGradient : UIElement
     {
         #region Variables
+
         private VAO gradientQuad;
         private float selx = 0.0f, sely = 1.0f, h = 1.0f;
         private bool mouseDown = false;
@@ -31,14 +29,15 @@ namespace OpenGL.UI
             get { return color; }
             set
             {
-
             }
         }
 
         public OnMouse OnColorChange { get; set; }
-        #endregion
+
+        #endregion Variables
 
         #region Constructor
+
         public ColorGradient()
         {
             var colorGradient = UserInterface.GetElement("ColorGradient");
@@ -68,9 +67,11 @@ namespace OpenGL.UI
 
             UpdateColor();
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         private void UpdateMousePosition(int x, int y)
         {
             if (!mouseDown) return;
@@ -97,9 +98,11 @@ namespace OpenGL.UI
 
             if (OnColorChange != null) OnColorChange(this, new MouseEventArgs());
         }
-        #endregion
+
+        #endregion Methods
 
         #region UIElement Methods
+
         public override void Draw()
         {
             Program.Use();
@@ -121,17 +124,21 @@ namespace OpenGL.UI
             gradientQuad.DisposeChildren = true;
             gradientQuad.Dispose();
         }
-        #endregion
+
+        #endregion UIElement Methods
     }
 
     public class HueGradient : UIElement
     {
         #region Variables
+
         private VAO hueQuad;
         private bool mouseDown = false;
-        #endregion
+
+        #endregion Variables
 
         #region Constructor
+
         public HueGradient()
         {
             this.Program = Shaders.HueShader;
@@ -155,9 +162,11 @@ namespace OpenGL.UI
             this.OnMouseLeave = new OnMouse((sender, eventArgs) => mouseDown = false);
             this.OnMouseMove = new OnMouse((sender, eventArgs) => UpdateMousePosition(eventArgs.Location.X, eventArgs.Location.Y));
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         private void UpdateMousePosition(int x, int y)
         {
             if (!mouseDown) return;
@@ -173,9 +182,11 @@ namespace OpenGL.UI
             var colorGradient = UserInterface.GetElement("ColorGradient");
             if (colorGradient != null) ((ColorGradient)colorGradient).Hue = hue;
         }
-        #endregion
+
+        #endregion Methods
 
         #region UIElement Methods
+
         public override void Draw()
         {
             Gl.Enable(EnableCap.Blend);
@@ -201,20 +212,24 @@ namespace OpenGL.UI
             hueQuad.DisposeChildren = true;
             hueQuad.Dispose();
         }
-        #endregion
+
+        #endregion UIElement Methods
     }
 
     public class HSLColor
     {
         #region Properties
+
         public float H { get; private set; }
 
         public float S { get; private set; }
 
         public float L { get; private set; }
-        #endregion
+
+        #endregion Properties
 
         #region Constructors
+
         public HSLColor(float h, float s, float l)
         {
             this.H = h;
@@ -247,7 +262,6 @@ namespace OpenGL.UI
                     S = (float)(_Delta / (2.0f - _Max - _Min));
                 }
 
-
                 if (r == _Max)
                 {
                     H = (g - b) / _Delta;
@@ -271,9 +285,11 @@ namespace OpenGL.UI
             : this(c.R / 255f, c.G / 255f, c.B / 255f)
         {
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         public Vector3 ToVector()
         {
             float r, g, b;
@@ -300,6 +316,7 @@ namespace OpenGL.UI
             if (t < 2 / 3.0) return p + (q - p) * (2 / 3.0f - t) * 6;
             return p;
         }
-        #endregion
+
+        #endregion Methods
     }
 }

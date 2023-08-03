@@ -7,6 +7,7 @@ namespace OpenGL.Platform
     public static class Compatibility
     {
         #region Structs
+
         public struct ScreenResolution : IComparable
         {
             public int width;
@@ -45,9 +46,11 @@ namespace OpenGL.Platform
                 return 0;
             }
         }
-        #endregion
+
+        #endregion Structs
 
         #region OS Detection
+
         public enum OSVersion : int
         {
             Unknown = 0,
@@ -78,9 +81,11 @@ namespace OpenGL.Platform
 
             return osVersion == OSVersion.Win32;
         }
-        #endregion
+
+        #endregion OS Detection
 
         #region Public Methods
+
         /// <summary>
         /// Detect the current running operating system and set up GetProcAddress
         /// and CGSetLocalEventsDelegateSuppressionInterval depending on the OS.
@@ -123,6 +128,7 @@ namespace OpenGL.Platform
                 }
             }
         }
-        #endregion
+
+        #endregion Public Methods
     }
 }

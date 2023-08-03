@@ -7,10 +7,11 @@ uniform bool enableLighting;
 uniform mat4 lightData;
 
 //directional Light
+uniform bool useDirectional;
+uniform vec3 directionalColor;
 uniform vec3 directionalLight;
 
 uniform sampler2D textureSampler;
-
 
 in vec3 position;
 in vec3 normal;
@@ -63,8 +64,13 @@ void main()
    //Lighting
    vec3 lightDirection = normalize(lightPosition - position);
    vec3 viewDirection = normalize(viewPosition - position);
+
    float distanceToLight = length(lightPosition-position);
    float k = 1/pow(distanceToLight,2);
+
+   //directional
+   float directionalIntensity = max(dot(directionalLight, normal),0);
+   vec3 directional = directionalIntensity * directionalColor;
 
    // Reflect needs the light direction from the light position to vertex position:
    // L - 2.0 * dot(N, L) * N.
@@ -77,7 +83,12 @@ void main()
    vec3 finalColor = baseColor * color;
 
    if(enableLighting)
+   {
+      if(!useDirectional)
    finalColor *= (ambient + k*(diffuse + specular));
+   else
+   finalColor *= (ambient + k*(diffuse + specular) + directional);
+   }
 
    fragColor = vec4(finalColor, 1.0f);
 }

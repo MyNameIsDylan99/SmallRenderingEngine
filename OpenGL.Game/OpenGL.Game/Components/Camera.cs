@@ -1,16 +1,12 @@
 ﻿using OpenGL.Mathematics;
 using OpenGL.Platform;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenGL.Game.Components
 {
     public class Camera : Component
     {
         public float FOV = 45;
+
         public Camera(GameObject gameObject) : base(gameObject)
         {
         }
@@ -47,6 +43,5 @@ namespace OpenGL.Game.Components
 
             return projection;
         }
-
     }
 }

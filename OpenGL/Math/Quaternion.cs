@@ -1,19 +1,23 @@
 ﻿#if USE_NUMERICS
 using System.Numerics;
 #else
+
 using System;
 using System.Runtime.InteropServices;
+
 #endif
 
 namespace OpenGL
 {
 #if !USE_NUMERICS
+
     [StructLayout(LayoutKind.Sequential)]
     public struct Quaternion : IEquatable<Quaternion>
     {
         public float X, Y, Z, W;
 
         #region Static Constructors
+
         public static Quaternion Zero
         {
             get { return new Quaternion(0, 0, 0, 0); }
@@ -23,9 +27,11 @@ namespace OpenGL
         {
             get { return new Quaternion(0, 0, 0, 1); }
         }
-        #endregion
+
+        #endregion Static Constructors
 
         #region Constructor
+
         public Quaternion(float x, float y, float z, float w)
         {
             this.X = x; this.Y = y; this.Z = z; this.W = w;
@@ -35,9 +41,11 @@ namespace OpenGL
         {
             this.X = vec.X; this.Y = vec.Y; this.Z = vec.Z; this.W = vec.W;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Operators
+
         public static Quaternion operator +(Quaternion q1, Quaternion q2)
         {
             return new Quaternion(q1.X + q2.X, q1.Y + q2.Y, q1.Z + q2.Z, q1.W + q2.W);
@@ -103,9 +111,11 @@ namespace OpenGL
         {
             return !(q1.W == q2.W && q1.X == q2.X && q1.Y == q2.Y && q1.Z == q2.Z);
         }
-        #endregion
+
+        #endregion Operators
 
         #region Overrides
+
         /// <summary>
         /// Returns a string representing this Quaternion.
         /// </summary>
@@ -146,9 +156,11 @@ namespace OpenGL
         {
             return base.GetHashCode();
         }
-        #endregion
+
+        #endregion Overrides
 
         #region Properties
+
         public Matrix4 Matrix4
         {
             get
@@ -182,9 +194,11 @@ namespace OpenGL
         {
             get { return X * X + Y * Y + Z * Z + W * W; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Gets the dot product of the current Quaternion with another.  Dot = x*q.x + y * q.y + z * q.z + w * q.w
         /// </summary>
@@ -323,7 +337,6 @@ namespace OpenGL
         public static Quaternion SimpleSquad(Quaternion prev, Quaternion q1,
           Quaternion q2, Quaternion post, float t)
         {
-
             if (prev.Dot(q1) < 0)
                 q1 = -q1;
             if (q1.Dot(q2) < 0)
@@ -388,7 +401,7 @@ namespace OpenGL
             }
             else
             {
-                // This occurs when the angle is zero. 
+                // This occurs when the angle is zero.
                 // Not a problem: just set an arbitrary normalized axis.
                 return new Vector4(Vector3.UnitX, w);
             }
@@ -451,8 +464,10 @@ namespace OpenGL
                 return t_return;
             }
         }
-        #endregion
+
+        #endregion Methods
     }
+
 #else
     /// <summary>
     /// Extension methods for the Quaternion structure.
@@ -476,7 +491,7 @@ namespace OpenGL
             }
             else
             {
-                // This occurs when the angle is zero. 
+                // This occurs when the angle is zero.
                 // Not a problem: just set an arbitrary normalized axis.
                 return new Vector4(Vector3.UnitX, w);
             }

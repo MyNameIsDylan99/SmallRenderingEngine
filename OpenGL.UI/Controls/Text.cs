@@ -1,13 +1,9 @@
-﻿using System;
-
-using OpenGL;
-using OpenGL.Platform;
-
-namespace OpenGL.UI
+﻿namespace OpenGL.UI
 {
     public class Text : UIElement
     {
         #region Built-In Font Sizes
+
         public enum FontSize
         {
             _12pt = 0,
@@ -32,16 +28,20 @@ namespace OpenGL.UI
                     return BMFont.LoadFont("fonts/font12.fnt");
             }
         }
-        #endregion
+
+        #endregion Built-In Font Sizes
 
         #region Private Fields
+
         private string text;
         private BMFont bitmapFont;
         private Vector3 color;
         private BMFont.Justification justification;
-        #endregion
+
+        #endregion Private Fields
 
         #region Public Properties
+
         public Vector3 Color
         {
             get { return color; }
@@ -90,9 +90,11 @@ namespace OpenGL.UI
                 this.TextSize = new Point(bitmapFont.GetWidth(text), bitmapFont.Height);
             }
         }
-        #endregion
+
+        #endregion Public Properties
 
         #region Constructors
+
         public Text(ShaderProgram program, BMFont font, string text, BMFont.Justification justification = BMFont.Justification.Left)
             : this(program, font, text, new Vector3(1, 1, 1), justification)
         {
@@ -117,9 +119,11 @@ namespace OpenGL.UI
             this.String = text;
             this.Position = new Point(0, 0);
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Public Methods
+
         /// <summary>
         /// Updates the current VAO with a new font.
         /// Will use the current 'String' if it exists, otherwise will leave VAO as null.
@@ -156,9 +160,11 @@ namespace OpenGL.UI
             Gl.DrawElements(BeginMode.Triangles, vertexCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
             Gl.Disable(EnableCap.Blend);
         }
-        #endregion
+
+        #endregion Public Methods
 
         #region UIElement Overrides (Draw, Pick, Dispose)
+
         public override void Draw()
         {
             base.Draw();
@@ -189,6 +195,7 @@ namespace OpenGL.UI
 
             base.Dispose(true);
         }
-        #endregion
+
+        #endregion UIElement Overrides (Draw, Pick, Dispose)
     }
 }

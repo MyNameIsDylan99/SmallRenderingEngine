@@ -11,6 +11,7 @@ namespace OpenGL.Platform
     public class Event
     {
         #region Properties
+
         /// <summary>The keyboard event delegate.</summary>
         public delegate void KeyEvent(char c, bool state);
 
@@ -43,9 +44,11 @@ namespace OpenGL.Platform
 
         /// <summary>A repeatEvent delegate which can be called by UpdateKeys(float Time).</summary>
         public RepeatEvent Repeat { get; private set; }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>Creates a KeyEvent delegate from an Action or lambda expression.</summary>
         /// <param name="Event">The Event to call on a key down event.</param>
         public Event(Action Event)
@@ -90,12 +93,14 @@ namespace OpenGL.Platform
         {
             this.Repeat = Event;
         }
-        #endregion
+
+        #endregion Methods
     }
 
     public static class Input
     {
         #region Constructor
+
         /// <summary>Constructor of Input for first time instantiation</summary>
         static Input()
         {
@@ -103,9 +108,11 @@ namespace OpenGL.Platform
             subqueue = new Stack<Event[]>();
             subqueue.Push(new Event[256]);
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Variables
+
         private static List<char> keys;                                // a list of keys that are down
         private static Stack<Event[]> subqueue;                        // a stack of events, the topmost being the current key bindings
         private static Click mousePosition, prevMousePosition;         // the current and previous mouse position and button
@@ -114,9 +121,11 @@ namespace OpenGL.Platform
 
         public static bool RightMouse { get; set; }
         public static bool LeftMouse { get; set; }
-        #endregion
+
+        #endregion Variables
 
         #region Properties
+
         /// <summary>
         /// The active key bindings (on the topmost of the keybinding stack).
         /// </summary>
@@ -178,9 +187,11 @@ namespace OpenGL.Platform
             get { return mouseMove; }
             set { mouseMove = value; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Adds a key that has been pressed to the list of keys that are currently held down.
         /// </summary>
@@ -350,6 +361,7 @@ namespace OpenGL.Platform
                         KeyBindings[keys[i]].Repeat(Time.DeltaTime);
             }
         }
-        #endregion
+
+        #endregion Methods
     }
 }

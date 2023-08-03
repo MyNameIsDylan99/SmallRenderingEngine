@@ -10,14 +10,17 @@ namespace OpenGL.Game
 
         public Transform Transform { get; set; } = new Transform();
 
+        public Game game;
+
         public MeshRenderer Renderer { get; private set; }
 
         private List<Component> components = new List<Component>();
 
-        public GameObject(string name, MeshRenderer renderer = null)
+        public GameObject(string name, Game game, MeshRenderer renderer = null)
         {
             this.Renderer = renderer;
             this.Name = name;
+            this.game = game;
         }
 
         public void Initialize()
@@ -39,7 +42,7 @@ namespace OpenGL.Game
 
         public bool HasComponent<T>() where T : Component
         {
-            return components.Exists((c)=>c.GetType() == typeof(T));
+            return components.Exists((c) => c.GetType() == typeof(T));
         }
 
         public T GetComponent<T>() where T : Component

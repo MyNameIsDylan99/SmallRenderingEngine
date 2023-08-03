@@ -1,19 +1,24 @@
 ﻿using System;
+
 #if USE_NUMERICS
 using System.Numerics;
 #else
+
 using System.Runtime.InteropServices;
+
 #endif
 
 namespace OpenGL
 {
 #if !USE_NUMERICS
+
     [StructLayout(LayoutKind.Sequential)]
     public struct Vector4 : IEquatable<Vector4>
     {
         public float X, Y, Z, W;
 
         #region Static Constructors
+
         public static Vector4 Zero
         {
             get { return new Vector4(0.0f, 0.0f, 0.0f, 0.0f); }
@@ -43,9 +48,11 @@ namespace OpenGL
         {
             get { return new Vector4(1.0f, 1.0f, 1.0f, 1.0f); }
         }
-        #endregion
+
+        #endregion Static Constructors
 
         #region Operators
+
         public static Vector4 operator +(Vector4 v1, Vector4 v2)
         {
             return new Vector4(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z, v1.W + v2.W);
@@ -120,9 +127,11 @@ namespace OpenGL
         {
             return (v1.X != v2.X || v1.Y != v2.Y || v1.Z != v2.Z || v1.W != v2.W);
         }
-        #endregion
+
+        #endregion Operators
 
         #region Constructors
+
         /// <summary>Creates a Vector4 structure whose elements have the specified values.</summary>
         /// <param name="x">The value to assign to the X field.</param>
         /// <param name="y">The value to assign to the Y field.</param>
@@ -165,9 +174,11 @@ namespace OpenGL
             Z = z;
             W = w;
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Overrides
+
         public override bool Equals(object obj)
         {
             if (!(obj is Vector4)) return false;
@@ -208,9 +219,11 @@ namespace OpenGL
 
             return new Vector4(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]), float.Parse(split[3]));
         }
-        #endregion
+
+        #endregion Overrides
 
         #region Properties
+
         /// <summary>
         /// Get the length of the Vector4 structure.
         /// </summary>
@@ -226,9 +239,11 @@ namespace OpenGL
         {
             get { return X * X + Y * Y + Z * Z + W * W; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Vector4 scalar dot product.
         /// </summary>
@@ -343,8 +358,10 @@ namespace OpenGL
             array[offset + 2] = Z;
             array[offset + 3] = W;
         }
-        #endregion
+
+        #endregion Methods
     }
+
 #endif
 
     /// <summary>

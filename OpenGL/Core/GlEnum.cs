@@ -3,6 +3,7 @@
 namespace OpenGL
 {
 #pragma warning disable CS1591
+
     public enum ActiveAttribType : int
     {
         Float = ((int)0x1406),
@@ -143,8 +144,10 @@ namespace OpenGL
         TrianglesAdjacency = ((int)0xC),
         TriangleStripAdjacency = ((int)0xD),
         Patches = ((int)0xE),
+
         [Obsolete("OpenGL 4 Core does not support quads.")]
         Quads = ((int)0x0007),
+
         [Obsolete("OpenGL 4 Core does not support quads.")]
         QuadStrip = ((int)0x0008)
     }
@@ -413,18 +416,24 @@ namespace OpenGL
     {
         //PointSmooth = ((int)0x0B10),
         LineSmooth = ((int)0x0B20),
+
         //LineStipple = ((int)0x0B24),
         PolygonSmooth = ((int)0x0B41),
+
         //PolygonStipple = ((int)0x0B42),
         CullFace = ((int)0x0B44),
+
         //Lighting = ((int)0x0B50),
         //ColorMaterial = ((int)0x0B57),
         //Fog = ((int)0x0B60),
         DepthTest = ((int)0x0B71),
+
         StencilTest = ((int)0x0B90),
+
         //Normalize = ((int)0x0BA1),
         //AlphaTest = ((int)0x0BC0),
         Dither = ((int)0x0BD0),
+
         Blend = ((int)0x0BE2),
         IndexLogicOp = ((int)0x0BF1),
         ColorLogicOp = ((int)0x0BF2),
@@ -480,8 +489,10 @@ namespace OpenGL
         HistogramExt = ((int)0x8024),
         MinmaxExt = ((int)0x802E),
         PolygonOffsetFill = ((int)0x8037),
+
         //RescaleNormal = ((int)0x803A),
         RescaleNormalExt = ((int)0x803A),
+
         Texture3DExt = ((int)0x806F),
         VertexArray = ((int)0x8074),
         NormalArray = ((int)0x8075),
@@ -528,14 +539,18 @@ namespace OpenGL
         FragmentLight5Sgix = ((int)0x8411),
         FragmentLight6Sgix = ((int)0x8412),
         FragmentLight7Sgix = ((int)0x8413),
+
         //FogCoordArray = ((int)0x8457),
         ColorSum = ((int)0x8458),
+
         SecondaryColorArray = ((int)0x845E),
         TextureCubeMap = ((int)0x8513),
         ProgramPointSize = ((int)0x8642),
         VertexProgramPointSize = ((int)0x8642),
+
         //VertexProgramTwoSide = ((int)0x8643),
         DepthClamp = ((int)0x864F),
+
         TextureCubeMapSeamless = ((int)0x884F),
         PointSprite = ((int)0x8861),
         RasterizerDiscard = ((int)0x8C89),
@@ -1361,8 +1376,10 @@ namespace OpenGL
         ArrayBufferBinding = ((int)0x8894),
         Blend = ((int)0x0BE2),
         BlendColor = ((int)0x8005),
+
         [Obsolete("Use BlendColor instead.")]
         BlendColorExt = ((int)0x8005),
+
         BlendDstAlpha = ((int)0x80CA),
         BlendDstRgb = ((int)0x80C8),
         BlendEquationAlpha = ((int)0x883D),
@@ -1500,13 +1517,17 @@ namespace OpenGL
         NumShaderBinaryFormats = ((int)0x8DF9),
         PackAlignment = ((int)0x0D05),
         PackImageHeight = ((int)0x806C),
+
         [Obsolete("Use PackImageHeight instead.")]
         PackImageHeightExt = ((int)0x806C),
+
         PackLsbFirst = ((int)0x0D01),
         PackRowLength = ((int)0x0D02),
         PackSkipImages = ((int)0x806B),
+
         [Obsolete("Use PackSkipImages instead.")]
         PackSkipImagesExt = ((int)0x806B),
+
         PackSkipPixels = ((int)0x0D04),
         PackSkipRows = ((int)0x0D03),
         PackSwapBytes = ((int)0x0D00),
@@ -1585,13 +1606,17 @@ namespace OpenGL
         UniformBufferSize = ((int)0x8A2A),
         UnpackAlignment = ((int)0x0CF5),
         UnpackImageHeight = ((int)0x806E),
+
         [Obsolete("Use UnpackImageHeight instead.")]
         UnpackImageHeightExt = ((int)0x806E),
+
         UnpackLsbFirst = ((int)0x0CF1),
         UnpackRowLength = ((int)0x0CF2),
         UnpackSkipImages = ((int)0x806D),
+
         [Obsolete("Use UnpackSkipImages instead.")]
         UnpackSkipImagesExt = ((int)0x806D),
+
         UnpackSkipPixels = ((int)0x0CF4),
         UnpackSkipRows = ((int)0x0CF3),
         UnpackSwapBytes = ((int)0x0CF0),
@@ -2685,5 +2710,6 @@ namespace OpenGL
         UnsignedInt2101010Reversed = ((int)0x8D9F),
         UnsignedUInt101111Reversed = ((int)0x8C3B)
     }
+
 #pragma warning restore
 }

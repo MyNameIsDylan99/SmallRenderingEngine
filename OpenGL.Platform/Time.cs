@@ -3,10 +3,10 @@
     public static class Time
     {
         #region Static Fields and Properties
+
         private static System.Diagnostics.Stopwatch Timer;
         private static int deltaTimeIntegrator;
         private static float physicsAccumulator = 0f;
-
 
         /// <summary>
         /// Gets the amount of (accumulated) time in seconds since start up.
@@ -51,9 +51,11 @@
         /// This defaults to 0.025s, which is equivalent to 20fps.
         /// </summary>
         public static float PhysicsUpdateRate { get; set; }
-        #endregion
+
+        #endregion Static Fields and Properties
 
         #region Static Methods
+
         /// <summary>
         /// Initializes and begins a Stopwatch for the Time static class.
         /// </summary>
@@ -96,6 +98,7 @@
 
             return DeltaTime;
         }
-        #endregion
+
+        #endregion Static Methods
     }
 }

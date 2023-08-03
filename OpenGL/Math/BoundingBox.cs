@@ -12,11 +12,14 @@ namespace OpenGL
     public class AxisAlignedBoundingBox
     {
         #region Variables
+
         private Vector3 min;
         private Vector3 max;
-        #endregion
+
+        #endregion Variables
 
         #region Properties
+
         /// <summary>
         /// The minimum x, y, and z values for the AxisAlignedBoundingBox.
         /// </summary>
@@ -62,9 +65,11 @@ namespace OpenGL
                 return (float)Math.Sqrt(t_length * t_length * 3) / 2.0f;
             }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Creates an axis-aligned bounding box of size min, max.
         /// </summary>
@@ -167,9 +172,11 @@ namespace OpenGL
             min += Translation;
             max += Translation;
         }
-        #endregion
+
+        #endregion Methods
 
         #region Intersects
+
         /// <summary>
         /// Returns true if the vector intersects the AxisAlignedBoundingBox.
         /// </summary>
@@ -257,7 +264,8 @@ namespace OpenGL
                 Position.Y >= min.Y && Position.Y <= max.Y &&
                 Position.Z >= min.Z && Position.Z <= max.Z);
         }
-        #endregion
+
+        #endregion Intersects
     }
 
     /// <summary>
@@ -266,11 +274,14 @@ namespace OpenGL
     public class OrientatedBoundingBox
     {
         #region Variables
+
         private AxisAlignedBoundingBox box;
         private Matrix4 modelMatrix;
-        #endregion
+
+        #endregion Variables
 
         #region Properties
+
         /// <summary>
         /// The minimum x, y, and z values for the OrientatedBoundingBox.
         /// </summary>
@@ -313,9 +324,11 @@ namespace OpenGL
         {
             get { return box; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Creates an orientated bounding box of size min, max.
         /// </summary>
@@ -336,9 +349,11 @@ namespace OpenGL
         {
             box.SetExtents(Min, Max);
         }
-        #endregion
+
+        #endregion Methods
 
         #region Intersects
+
         /// <summary>
         /// Returns true if the ray intersects the OrientatedBoundingBox.
         /// </summary>
@@ -348,6 +363,7 @@ namespace OpenGL
         {
             return r.Intersects(this);
         }
-        #endregion
+
+        #endregion Intersects
     }
 }

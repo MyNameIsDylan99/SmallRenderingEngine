@@ -1,13 +1,11 @@
-﻿using System;
-
-using OpenGL;
-using OpenGL.Platform;
+﻿using OpenGL.Platform;
 
 namespace OpenGL.UI
 {
     public class CheckBox : UIContainer
     {
         #region Get/Set Font and Text
+
         private Text text;
         private BMFont font;
         private string textString;
@@ -57,9 +55,11 @@ namespace OpenGL.UI
         /// An event that is fired when the checkbox changes state.
         /// </summary>
         public OnMouse OnCheckedChanged { get; set; }
-        #endregion
+
+        #endregion Get/Set Font and Text
 
         #region Checkbox Textures and State
+
         private Button checkBox;
         private bool isChecked;
 
@@ -91,9 +91,11 @@ namespace OpenGL.UI
                 else checkBox.BackgroundTexture = UncheckedTexture;
             }
         }
-        #endregion
+
+        #endregion Checkbox Textures and State
 
         #region Constructor
+
         /// <summary>
         /// Creates a simple checkbox user interface element which can be used
         /// for setting/modifying the state of a boolean value.
@@ -120,6 +122,7 @@ namespace OpenGL.UI
 
             checkBox.OnMouseClick = new OnMouse((o, e) => this.Checked = !this.Checked);
         }
-        #endregion
+
+        #endregion Constructor
     }
 }

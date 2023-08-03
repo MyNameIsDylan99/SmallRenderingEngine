@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+
 #if USE_NUMERICS
 using System.Numerics;
 #endif
@@ -100,12 +101,11 @@ namespace OpenGL
         /// <returns>The VAO object representing this quad.</returns>
         public static VAO CreateQuad(ShaderProgram program, Vector2 location, Vector2 size)
         {
-            Vector3[] vertices = new Vector3[] { new Vector3(location.X, location.Y, 0), new Vector3(location.X + size.X, location.Y, 0), 
+            Vector3[] vertices = new Vector3[] { new Vector3(location.X, location.Y, 0), new Vector3(location.X + size.X, location.Y, 0),
                 new Vector3(location.X + size.X, location.Y + size.Y, 0), new Vector3(location.X, location.Y + size.Y, 0) };
-            Vector2[] uvs = new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
             uint[] indices = new uint[] { 0, 1, 2, 2, 3, 0 };
 
-            return new VAO(program, new VBO<Vector3>(vertices), new VBO<Vector2>(uvs), new VBO<uint>(indices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead));
+            return new VAO(program, new VBO<Vector3>(vertices), new VBO<uint>(indices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead));
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace OpenGL
         /// <returns>The VAO object representing this quad.</returns>
         public static VAO CreateQuad(ShaderProgram program, Vector2 location, Vector2 size, Vector2 uvloc, Vector2 uvsize)
         {
-            Vector3[] vertices = new Vector3[] { new Vector3(location.X, location.Y, 0), new Vector3(location.X + size.X, location.Y, 0), 
+            Vector3[] vertices = new Vector3[] { new Vector3(location.X, location.Y, 0), new Vector3(location.X + size.X, location.Y, 0),
                 new Vector3(location.X + size.X, location.Y + size.Y, 0), new Vector3(location.X, location.Y + size.Y, 0) };
             Vector2[] uvs = new Vector2[] { uvloc, new Vector2(uvloc.X + uvsize.X, uvloc.Y), new Vector2(uvloc.X + uvsize.X, uvloc.Y + uvsize.Y), new Vector2(uvloc.X, uvloc.Y + uvsize.Y) };
             uint[] indices = new uint[] { 0, 1, 2, 2, 3, 0 };
@@ -138,7 +138,7 @@ namespace OpenGL
         /// <returns>The VAO object representing this quad.</returns>
         public static VAO CreateQuadWithNormals(ShaderProgram program, Vector2 location, Vector2 size)
         {
-            Vector3[] vertex = new Vector3[] { new Vector3(location.X, location.Y, 0), new Vector3(location.X + size.X, location.Y, 0), 
+            Vector3[] vertex = new Vector3[] { new Vector3(location.X, location.Y, 0), new Vector3(location.X + size.X, location.Y, 0),
                 new Vector3(location.X + size.X, location.Y + size.Y, 0), new Vector3(location.X, location.Y + size.Y, 0) };
             uint[] element = new uint[] { 0, 1, 2, 2, 3, 0 };
             Vector3[] normal = CalculateNormals(vertex, element);

@@ -1,14 +1,14 @@
-﻿using System;
+﻿using SDL2;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
-using SDL2;
 
 namespace OpenGL.Platform
 {
     public static class Window
     {
         #region Properties
+
         /// <summary>
         /// Gets the current width of the SDL window in pixels.
         /// </summary>
@@ -27,18 +27,21 @@ namespace OpenGL.Platform
         /// <summary>
         /// Gets the current vertical sync state of the SDL window.
         /// </summary>
-        
+
         /// <summary>
         /// The main thread ID, which is the thread ID that the OpenGL context was created on.
         /// This is the thread ID that must be used for all future OpenGL calls.
         /// </summary>
         public static int MainThreadID { get; private set; }
+
         public static bool VerticalSync { get; private set; }
 
         public static bool Open = false;
-        #endregion
+
+        #endregion Properties
 
         #region Create SDL Window and OpenGL Context
+
         private static IntPtr window, glContext;
 
         public enum ErrorCode
@@ -89,7 +92,6 @@ namespace OpenGL.Platform
 
         public static Vector2 GetWindowPosition()
         {
-
             int x; int y;
 
             SDL.SDL_GetWindowPosition(window, out x, out y);
@@ -131,9 +133,11 @@ namespace OpenGL.Platform
 
             return ErrorCode.Success;
         }
-        #endregion
+
+        #endregion Create SDL Window and OpenGL Context
 
         #region Swap Buffers
+
         /// <summary>
         /// Swap the OpenGL buffer and bring the back buffer to the screen.
         /// </summary>
@@ -141,9 +145,11 @@ namespace OpenGL.Platform
         {
             SDL.SDL_GL_SwapWindow(window);
         }
-        #endregion
+
+        #endregion Swap Buffers
 
         #region Apply Preferences
+
         public static void SetScreenMode(Compatibility.ScreenResolution screen, bool fullscreen)
         {
             if (fullscreen)
@@ -181,9 +187,11 @@ namespace OpenGL.Platform
             }
             else VerticalSync = false;
         }
-        #endregion
+
+        #endregion Apply Preferences
 
         #region Event Handling
+
         private static SDL.SDL_Event sdlEvent;
 
         public delegate void OnMouseWheelDelegate(uint wheel, int direction, int x, int y);
@@ -201,9 +209,11 @@ namespace OpenGL.Platform
                     case SDL.SDL_EventType.SDL_KEYDOWN:
                         OnKeyboardDown(sdlEvent.key.keysym.sym);
                         break;
+
                     case SDL.SDL_EventType.SDL_KEYUP:
                         OnKeyboardUp(sdlEvent.key.keysym.sym);
                         break;
+
                     case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
                     case SDL.SDL_EventType.SDL_MOUSEBUTTONUP:
                         // keep track of mouse state internally due to a bug in SDL
@@ -214,24 +224,30 @@ namespace OpenGL.Platform
 
                         OnMouse(sdlEvent.button.button, sdlEvent.button.state, sdlEvent.button.x, sdlEvent.button.y);
                         break;
+
                     case SDL.SDL_EventType.SDL_MOUSEMOTION:
                         OnMovePassive(sdlEvent.motion.x, sdlEvent.motion.y);
                         break;
+
                     case SDL.SDL_EventType.SDL_MOUSEWHEEL:
                         OnMouseWheel?.Invoke(sdlEvent.wheel.which, sdlEvent.wheel.y, 0, 0);
                         break;
+
                     case SDL.SDL_EventType.SDL_WINDOWEVENT:
                         switch (sdlEvent.window.windowEvent)
                         {
                             case SDL.SDL_WindowEventID.SDL_WINDOWEVENT_RESIZED:
                                 OnReshape(sdlEvent.window.data1, sdlEvent.window.data2);
                                 break;
+
                             case SDL.SDL_WindowEventID.SDL_WINDOWEVENT_CLOSE:
                                 OnClose();
                                 break;
+
                             case SDL.SDL_WindowEventID.SDL_WINDOWEVENT_MINIMIZED:
                                 // stop rendering the scene
                                 break;
+
                             case SDL.SDL_WindowEventID.SDL_WINDOWEVENT_RESTORED:
                             case SDL.SDL_WindowEventID.SDL_WINDOWEVENT_EXPOSED:
                                 // stop rendering the scene
@@ -241,9 +257,11 @@ namespace OpenGL.Platform
                 }
             }
         }
-        #endregion
+
+        #endregion Event Handling
 
         #region OnReshape and OnClose
+
         public static List<Action> OnReshapeCallbacks = new List<Action>();
         public static List<Action> OnCloseCallbacks = new List<Action>();
 
@@ -273,12 +291,15 @@ namespace OpenGL.Platform
 
             Open = false;
         }
-        #endregion
+
+        #endregion OnReshape and OnClose
 
         #region Mouse Callbacks
+
         private static int prevx, prevy, downx, downy;
 
         public delegate bool OnMouseCallback(int button, int state, int x, int y);
+
         public delegate bool OnMouseMoveCallback(int x, int y);
 
         public static List<OnMouseCallback> OnMouseCallbacks = new List<OnMouseCallback>();
@@ -359,15 +380,20 @@ namespace OpenGL.Platform
 
             if (!handled)
             {
-                Click mouse = new Click(x, y, (MouseButton)button, (MouseState)state); 
+                Click mouse = new Click(x, y, (MouseButton)button, (MouseState)state);
 
                 switch ((MouseButton)button)
                 {
-                    case MouseButton.Left: if (Input.MouseLeftClick != null && Input.MouseLeftClick.Click != null) Input.MouseLeftClick.Click(mouse);
+                    case MouseButton.Left:
+                        if (Input.MouseLeftClick != null && Input.MouseLeftClick.Click != null) Input.MouseLeftClick.Click(mouse);
                         break;
-                    case MouseButton.Middle: if (Input.MouseMiddleClick != null && Input.MouseMiddleClick.Click != null) Input.MouseMiddleClick.Click(mouse);
+
+                    case MouseButton.Middle:
+                        if (Input.MouseMiddleClick != null && Input.MouseMiddleClick.Click != null) Input.MouseMiddleClick.Click(mouse);
                         break;
-                    case MouseButton.Right: if (Input.MouseRightClick != null && Input.MouseRightClick.Click != null) Input.MouseRightClick.Click(mouse);
+
+                    case MouseButton.Right:
+                        if (Input.MouseRightClick != null && Input.MouseRightClick.Click != null) Input.MouseRightClick.Click(mouse);
                         break;
                 }
             }
@@ -389,9 +415,11 @@ namespace OpenGL.Platform
                 Input.MousePosition = new Click(x, y, Input.MousePosition.Button, Input.MousePosition.State);
             }
         }
-        #endregion
+
+        #endregion Mouse Callbacks
 
         #region Keyboard Callbacks
+
         private static bool lshift, lctrl, lalt;
         private static bool rshift, rctrl, ralt;
 
@@ -426,6 +454,7 @@ namespace OpenGL.Platform
             else if (sym == SDL.SDL_Keycode.SDLK_DOWN) Input.RemoveKey((char)3);
             else Input.RemoveKey((char)sym);
         }
-        #endregion
+
+        #endregion Keyboard Callbacks
     }
 }

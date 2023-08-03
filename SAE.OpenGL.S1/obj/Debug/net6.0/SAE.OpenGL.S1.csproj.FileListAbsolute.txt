@@ -66,3 +66,11 @@ C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\obj\Debug\net6.0\refint\SAE.Op
 C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\obj\Debug\net6.0\SAE.OpenGL.S1.pdb
 C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\obj\Debug\net6.0\SAE.OpenGL.S1.genruntimeconfig.cache
 C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\obj\Debug\net6.0\ref\SAE.OpenGL.S1.dll
+C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\bin\Debug\net6.0\fonts\segoe_ui12.fnt
+C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\bin\Debug\net6.0\fonts\segoe_ui12_0.png
+C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\bin\Debug\net6.0\fonts\segoe_ui16.fnt
+C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\bin\Debug\net6.0\fonts\segoe_ui16_0.png
+C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\bin\Debug\net6.0\fonts\segoe_ui24.fnt
+C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\bin\Debug\net6.0\fonts\segoe_ui24_0.png
+C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\bin\Debug\net6.0\fonts\segoe_ui32.fnt
+C:\Users\dylan\Documents\Git\sae_s1\SAE.OpenGL.S1\bin\Debug\net6.0\fonts\segoe_ui32_0.png

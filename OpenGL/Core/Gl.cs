@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace OpenGL
 {
     // Automatically generated from GlCore.cs using BuildGl
-    partial class Gl
+    public partial class Gl
     {
         /// <summary>
         /// Set the active program object for a program pipeline object.
@@ -42,6 +42,7 @@ namespace OpenGL
         {
             Delegates.glActiveTexture((int)texture);
         }
+
         /// <summary>
         /// Attaches a shader object to a program object.
         /// <para>
@@ -5481,7 +5482,7 @@ namespace OpenGL
         /// </param>
         /// <param name="length">
         /// Specifies the address of a variable into which is written the number of characters copied into name.
-        /// 
+        ///
         /// </param>
         /// <param name="name">
         /// Specifies the address of a buffer that will receive the name of the specified shader subroutine
@@ -5517,7 +5518,7 @@ namespace OpenGL
         /// </param>
         /// <param name="length">
         /// Specifies the address of a variable into which is written the number of characters copied into name.
-        /// 
+        ///
         /// </param>
         /// <param name="name">
         /// Specifies the address of a buffer that will receive the name of the specified shader subroutine
@@ -11657,7 +11658,7 @@ namespace OpenGL
         /// </param>
         /// <param name="shaders">
         /// Specifies the address of an array of shader handles into which to load pre-compiled shader binaries.
-        /// 
+        ///
         /// </param>
         /// <param name="binaryFormat">
         /// Specifies the format of the shader binaries contained in binary.
@@ -18095,6 +18096,5 @@ namespace OpenGL
         {
             Delegates.glWaitSync(sync, flags, timeout);
         }
-
     }
 }

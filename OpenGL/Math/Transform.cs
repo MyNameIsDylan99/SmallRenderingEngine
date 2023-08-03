@@ -11,14 +11,17 @@ namespace OpenGL.Mathematics
             get;
             set;
         } = Vector3.Zero;
+
         public Vector3 Forward
         {
             get => GetForwardAxis();
         }
+
         public Vector3 Right
         {
             get => GetRightAxis();
         }
+
         public Vector3 Up
         {
             get => GetUpAxis();
@@ -61,6 +64,7 @@ namespace OpenGL.Mathematics
 
             return model;
         }
+
         public Matrix4 GetSRT()
         {
             //model Translation
@@ -82,6 +86,7 @@ namespace OpenGL.Mathematics
 
             return model;
         }
+
         private Vector3 GetForwardAxis()
         {
             var forward = new Vector3(0, 0, 1);

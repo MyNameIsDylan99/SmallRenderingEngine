@@ -1,14 +1,12 @@
-﻿using System;
+﻿using OpenGL.Platform;
 using System.Collections;
-
-using OpenGL;
-using OpenGL.Platform;
 
 namespace OpenGL.UI
 {
     public interface IMouseInput
     {
         #region Interface Properties
+
         OnMouse OnMouseClick { get; set; }
 
         OnMouse OnMouseEnter { get; set; }
@@ -24,10 +22,12 @@ namespace OpenGL.UI
         OnMouse OnMouseRepeat { get; set; }
 
         OnFocus OnLoseFocus { get; set; }
-        #endregion
+
+        #endregion Interface Properties
     }
 
     #region Enumerations
+
     public enum Corner
     {
         BottomLeft,
@@ -45,9 +45,11 @@ namespace OpenGL.UI
         Horizontal,
         Vertical
     };
-    #endregion
+
+    #endregion Enumerations
 
     #region Structures
+
     public struct Invokable
     {
         public OnInvoke Method;
@@ -59,9 +61,11 @@ namespace OpenGL.UI
             this.Parameter = arg;
         }
     }
-    #endregion
+
+    #endregion Structures
 
     #region Delegates
+
     public delegate void OnChanged(object sender, EventArgs e);
 
     public delegate void OnInvoke(object arg);
@@ -69,11 +73,13 @@ namespace OpenGL.UI
     public delegate void OnMouse(object sender, MouseEventArgs e);
 
     public delegate void OnFocus(object sender, IMouseInput newFocus);
-    #endregion
+
+    #endregion Delegates
 
     public interface IUserInterface : IDisposable
     {
         #region Interface Properties
+
         float Alpha { get; set; }
 
         Point Position { get; set; }
@@ -101,17 +107,20 @@ namespace OpenGL.UI
         void Invalidate();
 
         void Invoke(OnInvoke Method, object arg);
-        #endregion
+
+        #endregion Interface Properties
     }
 
     public abstract class UIElement : IUserInterface, IMouseInput
     {
         #region Interface Overrides
+
         public float Alpha { get; set; }
 
         public Point Position { get; set; }
 
         private Point u_size;
+
         public Point Size
         {
             get { return u_size; }
@@ -236,19 +245,19 @@ namespace OpenGL.UI
                     uiQuad.DisposeChildren = true;
                     uiQuad.Dispose();
                 }
-                if(BackgroundTexture != null)
+                if (BackgroundTexture != null)
                 {
-                uiQuad = OpenGL.Geometry.CreateQuad(Shaders.TexturedUIShader, Vector2.Zero, new Vector2(Size.X, Size.Y), Vector2.Zero, new Vector2(1, 1));
+                    uiQuad = OpenGL.Geometry.CreateQuad(Shaders.TexturedUIShader, Vector2.Zero, new Vector2(Size.X, Size.Y), Vector2.Zero, new Vector2(1, 1));
                 }
                 else
-                uiQuad = OpenGL.Geometry.CreateQuad(Shaders.SolidUIShader, Vector2.Zero, new Vector2(Size.X, Size.Y), Vector2.Zero, new Vector2(1, 1));
-
+                    uiQuad = OpenGL.Geometry.CreateQuad(Shaders.SolidUIShader, Vector2.Zero, new Vector2(Size.X, Size.Y));
             }
 
             Invalidate();
         }
 
-        public virtual void Update() { }
+        public virtual void Update()
+        { }
 
         public virtual bool Pick(Point Location)
         {
@@ -257,10 +266,13 @@ namespace OpenGL.UI
                 Location.Y >= CorrectedPosition.Y && Location.Y <= CorrectedPosition.Y + Size.Y);
         }
 
-        public virtual void Invalidate() { }
-        #endregion
+        public virtual void Invalidate()
+        { }
+
+        #endregion Interface Overrides
 
         #region Invoke Methods
+
         private Queue InvokeQueue = null;
 
         /// <summary>
@@ -287,17 +299,21 @@ namespace OpenGL.UI
                 pInvoke.Method(pInvoke.Parameter);
             }
         }
-        #endregion
+
+        #endregion Invoke Methods
 
         #region Methods
+
         public static bool Intersects(Point Position, Point Size, Point Location)
         {
             return (Location.X >= Position.X && Location.X <= Position.X + Size.X &&
                 Location.Y >= Position.Y && Location.Y <= Position.Y + Size.Y);
         }
-        #endregion
+
+        #endregion Methods
 
         #region Draw Methods
+
         private VAO uiQuad;
 
         public Texture BackgroundTexture { get; set; }
@@ -341,6 +357,7 @@ namespace OpenGL.UI
 
             Gl.Disable(EnableCap.Blend);
         }
-        #endregion
+
+        #endregion Draw Methods
     }
 }

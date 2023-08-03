@@ -12,13 +12,16 @@ namespace OpenGL
     public class Plane : IEquatable<Plane>
     {
         #region Enumerations
+
         public enum PlaneSide
         {
             Negative, Positive, Both, None
         };
-        #endregion
+
+        #endregion Enumerations
 
         #region Properties
+
         /// <summary>
         /// The distance of the plane along its normal from the origin.
         /// </summary>
@@ -35,9 +38,11 @@ namespace OpenGL
             get { return D; }
             set { D = value; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Operators
+
         public static bool operator ==(Plane v1, Plane v2)
         {
             return (v1.Normal == v2.Normal && v1.D == v2.D);
@@ -47,9 +52,11 @@ namespace OpenGL
         {
             return (v1.Normal != v2.Normal || v1.D != v2.D);
         }
-        #endregion
+
+        #endregion Operators
 
         #region Methods
+
         /// <summary>
         /// Builds a plane from a scalar and vector3 normal.
         /// </summary>
@@ -169,6 +176,7 @@ namespace OpenGL
         {
             return Normal.GetHashCode() + D.GetHashCode();
         }
-        #endregion
+
+        #endregion Methods
     }
 }

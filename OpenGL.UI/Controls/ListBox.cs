@@ -1,22 +1,20 @@
-﻿using System;
-
-using OpenGL;
-using OpenGL.Platform;
-
-namespace OpenGL.UI
+﻿namespace OpenGL.UI
 {
     public class ListBox : UIContainer
     {
         #region Fields
+
         private string[] items;
         private Text text;
         private BMFont font;
         private Button dropDownToggle;
         private TextBox dropDownBox;
         private bool dropDownVisible;
-        #endregion
+
+        #endregion Fields
 
         #region Properties
+
         /// <summary>
         /// Returns a clone of the items as they are in the drop down
         /// box at this time.  This is not modifiable!
@@ -33,10 +31,10 @@ namespace OpenGL.UI
         public int SelectedLine
         {
             get { return dropDownBox.SelectedLine; }
-            set 
+            set
             {
                 dropDownBox.CurrentLine = Math.Max(0, Math.Min(dropDownBox.LineCount - 4, value));
-                dropDownBox.SelectedLine = value; 
+                dropDownBox.SelectedLine = value;
             }
         }
 
@@ -64,9 +62,11 @@ namespace OpenGL.UI
                 text.Position = new Point(0, text.TextSize.Y);
             }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor
+
         /// <summary>
         /// A list box with a textbox as the drop down text, a button for the toggle,
         /// and some text to display the currently selected line.
@@ -82,7 +82,7 @@ namespace OpenGL.UI
 
             this.dropDownToggle = new Button(dropDownIcon);
             this.dropDownToggle.RelativeTo = Corner.TopRight;
-            this.dropDownToggle.Position = new Point(0, (this.Size.Y - this.dropDownToggle.Size.Y)/ 2);
+            this.dropDownToggle.Position = new Point(0, (this.Size.Y - this.dropDownToggle.Size.Y) / 2);
             this.AddElement(dropDownToggle);
 
             this.dropDownBox = new TextBox(font, scrollTexture, selectedLine);
@@ -117,9 +117,11 @@ namespace OpenGL.UI
             this.SelectedLine = selectedLine;
             this.AddElement(text);
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods (OnLoseFocus and Invalidate)
+
         /// <summary>
         /// Called the the control loses focus by the user clicking elsewhere.
         /// This takes care of hiding the drop down box.
@@ -147,6 +149,7 @@ namespace OpenGL.UI
             if (dropDownBox.RelativeTo == Corner.Center) dropDownBox.Position = new Point(dropDownBox.Position.X, (-this.Size.Y - dropDownBox.Size.Y) / 2);
             this.dropDownToggle.Position = new Point(0, (this.Size.Y - this.dropDownToggle.Size.Y) / 2);
         }
-        #endregion
+
+        #endregion Methods (OnLoseFocus and Invalidate)
     }
 }

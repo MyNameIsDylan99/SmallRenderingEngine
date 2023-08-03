@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-using OpenGL;
-using OpenGL.Platform;
+﻿using OpenGL.Platform;
 
 namespace OpenGL.UI
 {
     public static class UserInterface
     {
         #region Variables
+
         public static UIContainer UIWindow;
 
         private static uint uniqueID = 0;
@@ -33,9 +30,11 @@ namespace OpenGL.UI
         {
             get { return activeContainerStack; }
         }
-        #endregion
+
+        #endregion Variables
 
         #region Initialization and Adding/Removing Elements
+
         public static void InitUI(int width, int height)
         {
             if (Shaders.Init())
@@ -78,9 +77,11 @@ namespace OpenGL.UI
             Elements.TryGetValue(name, out element);
             return element;
         }
-        #endregion
+
+        #endregion Initialization and Adding/Removing Elements
 
         #region Methods
+
         public static void Draw()
         {
             if (!Visible || UIWindow == null) return;
@@ -141,8 +142,8 @@ namespace OpenGL.UI
 
         public static void Dispose()
         {
-            if(UIWindow != null) 
-            UIWindow.Dispose();
+            if (UIWindow != null)
+                UIWindow.Dispose();
 
             UIWindow = null;
 
@@ -150,9 +151,11 @@ namespace OpenGL.UI
 
             Shaders.Dispose();
         }
-        #endregion
+
+        #endregion Methods
 
         #region Mouse Callbacks
+
         private static UIElement currentSelection = null, activeSelection = null;
 
         private static Click mousePosition, lmousePosition;            // the current and previous mouse position and button
@@ -178,10 +181,10 @@ namespace OpenGL.UI
         /// <summary>
         /// The current object that has focus (the last object clicked).
         /// </summary>
-        public static IMouseInput Focus 
-        { 
-            get; 
-            set; 
+        public static IMouseInput Focus
+        {
+            get;
+            set;
         }
 
         public static bool OnMouseMove(int x, int y)
@@ -198,8 +201,8 @@ namespace OpenGL.UI
 
             if (currentSelection != lastSelection)
             {
-                if (lastSelection != null && lastSelection.OnMouseLeave != null) lastSelection.OnMouseLeave(null, new MouseEventArgs(MousePosition, LastMousePosition));
-                if (currentSelection != null && currentSelection.OnMouseEnter != null) currentSelection.OnMouseEnter(null, new MouseEventArgs(MousePosition, LastMousePosition));
+                if (lastSelection != null && lastSelection.OnMouseLeave != null) lastSelection.OnMouseLeave(lastSelection, new MouseEventArgs(MousePosition, LastMousePosition));
+                if (currentSelection != null && currentSelection.OnMouseEnter != null) currentSelection.OnMouseEnter(currentSelection, new MouseEventArgs(MousePosition, LastMousePosition));
             }
 
             return (currentSelection != null);
@@ -240,9 +243,7 @@ namespace OpenGL.UI
 
             return (activeSelection != null);
         }
-        #endregion
 
-        #region Keyboard Callbacks
-        #endregion
+        #endregion Mouse Callbacks
     }
 }

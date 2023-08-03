@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace OpenGL
 {
-    partial class Gl
+    public partial class Gl
     {
         /// <summary>
         /// Record the GL time into a query object after all previous commands have reached the GL server but have not yet necessarily executed.

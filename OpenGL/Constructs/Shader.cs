@@ -18,41 +18,51 @@ namespace OpenGL
     public class ProgramParam
     {
         #region Variables
+
         private Type type;
         private int location;
         private uint programid;
         private ParamType ptype;
         private string name;
-        #endregion
+
+        #endregion Variables
 
         #region Properties
+
         /// <summary>
         /// Specifies the C# equivalent of the GLSL data type.
         /// </summary>
-        public Type Type { get { return type; } }
+        public Type Type
+        { get { return type; } }
 
         /// <summary>
         /// Specifies the location of the parameter in the OpenGL program.
         /// </summary>
-        public int Location { get { return location; } }
+        public int Location
+        { get { return location; } }
 
         /// <summary>
         /// Specifies the OpenGL program ID.
         /// </summary>
-        public uint Program { get { return programid; } }
+        public uint Program
+        { get { return programid; } }
 
         /// <summary>
         /// Specifies the parameter type (either attribute or uniform).
         /// </summary>
-        public ParamType ParamType { get { return ptype; } }
+        public ParamType ParamType
+        { get { return ptype; } }
 
         /// <summary>
         /// Specifies the case-sensitive name of the parameter.
         /// </summary>
-        public string Name { get { return name; } }
-        #endregion
+        public string Name
+        { get { return name; } }
+
+        #endregion Properties
 
         #region Constructor
+
         /// <summary>
         /// Creates a program parameter with a given type and name.
         /// The location must be found after the program is compiled
@@ -82,9 +92,11 @@ namespace OpenGL
             programid = Program;
             location = Location;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region GetLocation
+
         /// <summary>
         /// Gets the location of the parameter in a compiled OpenGL program.
         /// </summary>
@@ -98,9 +110,11 @@ namespace OpenGL
                 location = (ptype == OpenGL.ParamType.Uniform ? Program.GetUniformLocation(name) : Program.GetAttributeLocation(name));
             }
         }
-        #endregion
+
+        #endregion GetLocation
 
         #region SetValue Overrides
+
         public void SetValue(bool param)
         {
             if (Type != typeof(bool)) throw new Exception(string.Format("SetValue({0}) was given a bool.", Type));
@@ -194,12 +208,14 @@ namespace OpenGL
             if (Type != typeof(Texture)) throw new Exception(string.Format("SetValue({0}) was given a Texture.", Type));
             Gl.Uniform1i(location, param.Binding);
         }*/
-        #endregion
+
+        #endregion SetValue Overrides
     }
 
     public class Shader : IDisposable
     {
         #region Properties
+
         /// <summary>
         /// Specifies the OpenGL ShaderID.
         /// </summary>
@@ -217,9 +233,11 @@ namespace OpenGL
         {
             get { return Gl.GetShaderInfoLog(ShaderID); }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor and Destructor
+
         /// <summary>
         /// Compiles a shader, which can be either vertex, fragment or geometry.
         /// </summary>
@@ -245,9 +263,11 @@ namespace OpenGL
         {
             Dispose(false);
         }
-        #endregion
+
+        #endregion Constructor and Destructor
 
         #region IDisposable
+
         public void Dispose()
         {
             Dispose(true);
@@ -262,12 +282,14 @@ namespace OpenGL
                 ShaderID = 0;
             }
         }
-        #endregion
+
+        #endregion IDisposable
     }
 
     public class ShaderProgram : IDisposable
     {
         #region Properties
+
         /// <summary>
         /// Specifies the OpenGL shader program ID.
         /// </summary>
@@ -284,7 +306,7 @@ namespace OpenGL
         public Shader FragmentShader { get; private set; }
 
         /// <summary>
-        /// Specifies whether this program will dispose of the child 
+        /// Specifies whether this program will dispose of the child
         /// vertex/fragment programs when the IDisposable method is called.
         /// </summary>
         public bool DisposeChildren { get; set; }
@@ -310,9 +332,11 @@ namespace OpenGL
         {
             get { return Gl.GetProgramInfoLog(ProgramID); }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Constructors and Destructor
+
         /// <summary>
         /// Links a vertex and fragment shader together to create a shader program.
         /// </summary>
@@ -354,9 +378,11 @@ namespace OpenGL
         {
             Dispose(false);
         }
-        #endregion
+
+        #endregion Constructors and Destructor
 
         #region GetParams
+
         /// <summary>
         /// Parses all of the parameters (attributes/uniforms) from the two attached shaders
         /// and then loads their location by passing this shader program into the parameter object.
@@ -369,41 +395,41 @@ namespace OpenGL
             if (Gl.GetAddress("glGetProgramInterfaceiv") == IntPtr.Zero)
             {
 #endif
-                int[] resources = new int[1];
-                int[] actualLength = new int[1];
-                int[] arraySize = new int[1];
+            int[] resources = new int[1];
+            int[] actualLength = new int[1];
+            int[] arraySize = new int[1];
 
-                Gl.GetProgramiv(ProgramID, ProgramParameter.ActiveAttributes, resources);
+            Gl.GetProgramiv(ProgramID, ProgramParameter.ActiveAttributes, resources);
 
-                for (int i = 0; i < resources[0]; i++)
+            for (int i = 0; i < resources[0]; i++)
+            {
+                ActiveAttribType[] type = new ActiveAttribType[1];
+                System.Text.StringBuilder sb = new System.Text.StringBuilder(256);
+                Gl.GetActiveAttrib(ProgramID, i, 256, actualLength, arraySize, type, sb);
+
+                if (!shaderParams.ContainsKey(sb.ToString()))
                 {
-                    ActiveAttribType[] type = new ActiveAttribType[1];
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder(256);
-                    Gl.GetActiveAttrib(ProgramID, i, 256, actualLength, arraySize, type, sb);
-
-                    if (!shaderParams.ContainsKey(sb.ToString()))
-                    {
-                        ProgramParam param = new ProgramParam(TypeFromAttributeType(type[0]), ParamType.Attribute, sb.ToString());
-                        shaderParams.Add(param.Name, param);
-                        param.GetLocation(this);
-                    }
+                    ProgramParam param = new ProgramParam(TypeFromAttributeType(type[0]), ParamType.Attribute, sb.ToString());
+                    shaderParams.Add(param.Name, param);
+                    param.GetLocation(this);
                 }
+            }
 
-                Gl.GetProgramiv(ProgramID, ProgramParameter.ActiveUniforms, resources);
+            Gl.GetProgramiv(ProgramID, ProgramParameter.ActiveUniforms, resources);
 
-                for (int i = 0; i < resources[0]; i++)
+            for (int i = 0; i < resources[0]; i++)
+            {
+                ActiveUniformType[] type = new ActiveUniformType[1];
+                System.Text.StringBuilder sb = new System.Text.StringBuilder(256);
+                Gl.GetActiveUniform(ProgramID, (uint)i, 256, actualLength, arraySize, type, sb);
+
+                if (!shaderParams.ContainsKey(sb.ToString()))
                 {
-                    ActiveUniformType[] type = new ActiveUniformType[1];
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder(256);
-                    Gl.GetActiveUniform(ProgramID, (uint)i, 256, actualLength, arraySize, type, sb);
-
-                    if (!shaderParams.ContainsKey(sb.ToString()))
-                    {
-                        ProgramParam param = new ProgramParam(TypeFromUniformType(type[0]), ParamType.Uniform, sb.ToString());
-                        shaderParams.Add(param.Name, param);
-                        param.GetLocation(this);
-                    }
+                    ProgramParam param = new ProgramParam(TypeFromUniformType(type[0]), ParamType.Uniform, sb.ToString());
+                    shaderParams.Add(param.Name, param);
+                    param.GetLocation(this);
                 }
+            }
 #if GET_PROGRAM_INTERFACE
             }
             else
@@ -528,13 +554,16 @@ namespace OpenGL
                 default: return typeof(object);
             }
         }
-        #endregion
+
+        #endregion GetParams
 
         #region Methods
+
         public void Use()
         {
             Gl.UseProgram(this.ProgramID);
         }
+
         public static ShaderProgram Create(string pathVS, string pathFS)
         {
             string currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -549,6 +578,7 @@ namespace OpenGL
 
             return sp;
         }
+
         public int GetUniformLocation(string Name)
         {
             Use();
@@ -560,9 +590,11 @@ namespace OpenGL
             Use();
             return Gl.GetAttribLocation(ProgramID, Name);
         }
-        #endregion
+
+        #endregion Methods
 
         #region IDisposable
+
         public void Dispose()
         {
             Dispose(true);
@@ -586,6 +618,7 @@ namespace OpenGL
                 ProgramID = 0;
             }
         }
-        #endregion
+
+        #endregion IDisposable
     }
 }

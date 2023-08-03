@@ -10,6 +10,7 @@ namespace OpenGL
     public class Ray
     {
         #region Enumerations
+
         /// <summary>
         /// Ray can be of 3 types per dimension, resulting in 27 types
         /// Ray can be plus (P), zero (O) or minus (M)
@@ -21,19 +22,23 @@ namespace OpenGL
             OMM, OMP, OPM, OPP, MOM, MOP, POM, POP, MMO, MPO, PMO, PPO
 #pragma warning restore
         };
-        #endregion
+
+        #endregion Enumerations
 
         #region Variables
+
         private Vector3 origin;
         private Vector3 direction;
         private Vector3 inverse;
         private RayType classification;
         private float ibyj, jbyi, kbyj, jbyk, ibyk, kbyi;
         private float c_xy, c_xz, c_yx, c_yz, c_zx, c_zy;
-        bool dirty = true;
-        #endregion
+        private bool dirty = true;
+
+        #endregion Variables
 
         #region Properties
+
         /// <summary>
         /// Origin of the ray.  Ray = Origin + Direction * t
         /// </summary>
@@ -51,9 +56,11 @@ namespace OpenGL
             get { return direction; }
             set { direction = value; dirty = true; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Standard ray constructor.  Ray must have an origin and distance.
         /// </summary>
@@ -86,20 +93,23 @@ namespace OpenGL
         {
             return r.GetPoint(t);
         }
-        #endregion
+
+        #endregion Methods
 
         #region Intersects
+
         /* AABB and Ray Intersection Algorithm
-         * 
+         *
          * "Fast Ray / Axis-Aligned Bounding Box Overlap Tests using Ray Slopes"
          * by Martin Eisemann, Thorsten Grosch, Stefan Muller and Marcus Magnor
          * Computer Graphics Lab, TU Braunschweig, Germany and
          * University of Koblenz-Landau, Germany
-         * 
+         *
          * Breaks the 3 dimensions into 3 planes (xy, yz, xz) to perform
          * trivial calculations to determine if an intersect has occured.
-         * 
+         *
          * Conversion and Tweaking for Orchard Sun by Giawa */
+
         /// <summary>
         /// Precalculates the slopes and 2D projections for intersection tests.
         /// </summary>
@@ -213,6 +223,7 @@ namespace OpenGL
                         || (ibyk * b.Min.Z - b.Max.X + c_zx > 0))
                         return false;
                     return true;
+
                 case RayType.MMP:
                     if ((origin.X < b.Min.X) || (origin.Y < b.Min.Y) || (origin.Z > b.Max.Z)
                         || (jbyi * b.Min.X - b.Max.Y + c_xy > 0)
@@ -223,6 +234,7 @@ namespace OpenGL
                         || (ibyk * b.Max.Z - b.Max.X + c_zx > 0))
                         return false;
                     return true;
+
                 case RayType.MPM:
                     if ((origin.X < b.Min.X) || (origin.Y > b.Max.Y) || (origin.Z < b.Min.Z)
                         || (jbyi * b.Min.X - b.Min.Y + c_xy < 0)
@@ -233,6 +245,7 @@ namespace OpenGL
                         || (ibyk * b.Min.Z - b.Max.X + c_zx > 0))
                         return false;
                     return true;
+
                 case RayType.MPP:
                     if ((origin.X < b.Min.X) || (origin.Y > b.Max.Y) || (origin.Z > b.Max.Z)
                         || (jbyi * b.Min.X - b.Min.Y + c_xy < 0)
@@ -243,6 +256,7 @@ namespace OpenGL
                         || (ibyk * b.Max.Z - b.Max.X + c_zx > 0))
                         return false;
                     return true;
+
                 case RayType.PMM:
                     if ((origin.X > b.Max.X) || (origin.Y < b.Min.Y) || (origin.Z < b.Min.Z)
                         || (jbyi * b.Max.X - b.Max.Y + c_xy > 0)
@@ -253,6 +267,7 @@ namespace OpenGL
                         || (ibyk * b.Min.Z - b.Min.X + c_zx < 0))
                         return false;
                     return true;
+
                 case RayType.PMP:
                     if ((origin.X > b.Max.X) || (origin.Y < b.Min.Y) || (origin.Z > b.Max.Z)
                         || (jbyi * b.Max.X - b.Max.Y + c_xy > 0)
@@ -263,6 +278,7 @@ namespace OpenGL
                         || (ibyk * b.Max.Z - b.Min.X + c_zx < 0))
                         return false;
                     return true;
+
                 case RayType.PPM:
                     if ((origin.X > b.Max.X) || (origin.Y > b.Max.Y) || (origin.Z < b.Min.Z)
                         || (jbyi * b.Max.X - b.Min.Y + c_xy < 0)
@@ -273,6 +289,7 @@ namespace OpenGL
                         || (ibyk * b.Min.Z - b.Min.X + c_zx < 0))
                         return false;
                     return true;
+
                 case RayType.PPP:
                     if ((origin.X > b.Max.X) || (origin.Y > b.Max.Y) || (origin.Z > b.Max.Z)
                         || (jbyi * b.Max.X - b.Min.Y + c_xy < 0)
@@ -283,6 +300,7 @@ namespace OpenGL
                         || (ibyk * b.Max.Z - b.Min.X + c_zx < 0))
                         return false;
                     return true;
+
                 case RayType.OMM:
                     if ((origin.X < b.Min.X) || (origin.X > b.Max.X)
                         || (origin.Y < b.Min.Y) || (origin.Z < b.Min.Z)
@@ -290,6 +308,7 @@ namespace OpenGL
                         || (kbyj * b.Min.Y - b.Max.Z + c_yz > 0))
                         return false;
                     return true;
+
                 case RayType.OMP:
                     if ((origin.X < b.Min.X) || (origin.X > b.Max.X)
                         || (origin.Y < b.Min.Y) || (origin.Z > b.Max.Z)
@@ -297,6 +316,7 @@ namespace OpenGL
                         || (kbyj * b.Min.Y - b.Min.Z + c_yz < 0))
                         return false;
                     return true;
+
                 case RayType.OPM:
                     if ((origin.X < b.Min.X) || (origin.X > b.Max.X)
                         || (origin.Y > b.Max.Y) || (origin.Z < b.Min.Z)
@@ -304,6 +324,7 @@ namespace OpenGL
                         || (kbyj * b.Max.Y - b.Max.Z + c_yz > 0))
                         return false;
                     return true;
+
                 case RayType.OPP:
                     if ((origin.X < b.Min.X) || (origin.X > b.Max.X)
                         || (origin.Y > b.Max.Y) || (origin.Z > b.Max.Z)
@@ -311,6 +332,7 @@ namespace OpenGL
                         || (kbyj * b.Max.Y - b.Min.Z + c_yz < 0))
                         return false;
                     return true;
+
                 case RayType.MOM:
                     if ((origin.Y < b.Min.Y) || (origin.Y > b.Max.Y)
                         || (origin.X < b.Min.X) || (origin.Z < b.Min.Z)
@@ -318,6 +340,7 @@ namespace OpenGL
                         || (ibyk * b.Min.Z - b.Max.X + c_zx > 0))
                         return false;
                     return true;
+
                 case RayType.MOP:
                     if ((origin.Y < b.Min.Y) || (origin.Y > b.Max.Y)
                         || (origin.X < b.Min.X) || (origin.Z > b.Max.Z)
@@ -325,6 +348,7 @@ namespace OpenGL
                         || (ibyk * b.Max.Z - b.Max.X + c_zx > 0))
                         return false;
                     return true;
+
                 case RayType.POM:
                     if ((origin.Y < b.Min.Y) || (origin.Y > b.Max.Y)
                         || (origin.X > b.Max.X) || (origin.Z < b.Min.Z)
@@ -332,6 +356,7 @@ namespace OpenGL
                         || (ibyk * b.Min.Z - b.Min.X + c_zx < 0))
                         return false;
                     return true;
+
                 case RayType.POP:
                     if ((origin.Y < b.Min.Y) || (origin.Y > b.Max.Y)
                         || (origin.X > b.Max.X) || (origin.Z > b.Max.Z)
@@ -339,6 +364,7 @@ namespace OpenGL
                         || (ibyk * b.Max.Z - b.Min.X + c_zx < 0))
                         return false;
                     return true;
+
                 case RayType.MMO:
                     if ((origin.Z < b.Min.Z) || (origin.Z > b.Max.Z)
                         || (origin.X < b.Min.X) || (origin.Y < b.Min.Y)
@@ -346,6 +372,7 @@ namespace OpenGL
                         || (ibyj * b.Min.Y - b.Max.X + c_yx > 0))
                         return false;
                     return true;
+
                 case RayType.MPO:
                     if ((origin.Z < b.Min.Z) || (origin.Z > b.Max.Z)
                         || (origin.X < b.Min.X) || (origin.Y > b.Max.Y)
@@ -353,6 +380,7 @@ namespace OpenGL
                         || (ibyj * b.Max.Y - b.Max.X + c_yx > 0))
                         return false;
                     return true;
+
                 case RayType.PMO:
                     if ((origin.Z < b.Min.Z) || (origin.Z > b.Max.Z)
                         || (origin.X > b.Max.X) || (origin.Y < b.Min.Y)
@@ -360,6 +388,7 @@ namespace OpenGL
                         || (ibyj * b.Min.Y - b.Min.X + c_yx < 0))
                         return false;
                     return true;
+
                 case RayType.PPO:
                     if ((origin.Z < b.Min.Z) || (origin.Z > b.Max.Z)
                         || (origin.X > b.Max.X) || (origin.Y > b.Max.Y)
@@ -367,18 +396,21 @@ namespace OpenGL
                         || (ibyj * b.Max.Y - b.Min.X + c_yx < 0))
                         return false;
                     return true;
+
                 case RayType.MOO:
                     if ((origin.X < b.Min.X)
                         || (origin.Y < b.Min.Y) || (origin.Y > b.Max.Y)
                         || (origin.Z < b.Min.Z) || (origin.Z > b.Max.Z))
                         return false;
                     return true;
+
                 case RayType.POO:
                     if ((origin.X > b.Max.X)
                         || (origin.Y < b.Min.Y) || (origin.Y > b.Max.Y)
                         || (origin.Z < b.Min.Z) || (origin.Z > b.Max.Z))
                         return false;
                     return true;
+
                 case RayType.OMO:
                     if ((origin.Y < b.Min.Y)
                         || (origin.X < b.Min.X) || (origin.X > b.Max.X)
@@ -397,6 +429,7 @@ namespace OpenGL
                         || (origin.Y < b.Min.Y) || (origin.Y > b.Max.Y))
                         return false;
                     return true;
+
                 case RayType.OPO:
                     if ((origin.Y > b.Max.Y)
                         || (origin.X < b.Min.X) || (origin.X > b.Max.X)
@@ -411,6 +444,7 @@ namespace OpenGL
                         || (origin.Y < b.Min.Y) || (origin.Y > b.Max.Y))
                         return false;
                     return true;
+
                 case RayType.OOM:
                     if ((origin.Z < b.Min.Z)
                         || (origin.X < b.Min.X) || (origin.X > b.Max.X)
@@ -421,6 +455,7 @@ namespace OpenGL
                         || (origin.Y < b.Min.Y) || (origin.Y > b.Max.Y))
                         return false;
                     return true;
+
                 case RayType.OOP:
                     if ((origin.Z > b.Max.Z)
                         || (origin.X < b.Min.X) || (origin.X > b.Max.X)
@@ -442,6 +477,7 @@ namespace OpenGL
             Ray ray = new Ray(this.Origin * inverse, this.Direction * inverse);
             return ray.Intersects(new AxisAlignedBoundingBox(b.Min, b.Max));
         }
-        #endregion
+
+        #endregion Intersects
     }
 }

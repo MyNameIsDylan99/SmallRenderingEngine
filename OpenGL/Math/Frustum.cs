@@ -12,6 +12,7 @@ namespace OpenGL
     public class Frustum
     {
         #region Variables
+
         private Plane[] planes;
 
         /// <summary>
@@ -27,9 +28,11 @@ namespace OpenGL
                 else return planes[a];
             }
         }
-        #endregion
+
+        #endregion Variables
 
         #region Methods
+
         /// <summary>
         /// Builds a new Frustum and initializes six new planes.
         /// </summary>
@@ -90,6 +93,7 @@ namespace OpenGL
             }
             return true;
         }
-        #endregion
+
+        #endregion Methods
     }
 }

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-using OpenGL.Platform;
-
-namespace OpenGL.UI
+﻿namespace OpenGL.UI
 {
     public class UIContainer : UIElement
     {
         #region Properties
+
         protected List<UIElement> elements;
 
         public new string Name
@@ -24,9 +20,11 @@ namespace OpenGL.UI
         {
             get { return elements; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor
+
         public UIContainer()
             : this(new Point(0, 0), UserInterface.UIWindow.Size, "Container" + UserInterface.GetUniqueElementID())
         {
@@ -46,9 +44,11 @@ namespace OpenGL.UI
             this.Position = Position;
             this.Size = Size;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Container Methods
+
         public void AddElement(UIElement Element)
         {
             if (Element.Name == null || Element.Name.Length == 0)
@@ -117,9 +117,11 @@ namespace OpenGL.UI
             foreach (var element in elements) element.Dispose();
             elements.Clear();
         }
-        #endregion
+
+        #endregion Container Methods
 
         #region Overridden Methods
+
         protected override void Dispose(bool disposing)
         {
             while (elements.Count > 0) elements[0].Dispose();
@@ -162,6 +164,7 @@ namespace OpenGL.UI
             for (int i = 0; i < elements.Count; i++)
                 elements[i].DoInvoke();
         }
-        #endregion
+
+        #endregion Overridden Methods
     }
 }

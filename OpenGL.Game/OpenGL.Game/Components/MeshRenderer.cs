@@ -9,7 +9,7 @@ namespace OpenGL.Game.Components
 
         public List<Texture> MeshTextures { get; private set; } = new List<Texture>();
 
-        public MeshRenderer(ShaderProgram material, VAO geometry, List<Texture> textures = null ,GameObject gameObject = null) : base(gameObject)
+        public MeshRenderer(ShaderProgram material, VAO geometry, List<Texture> textures = null, GameObject gameObject = null) : base(gameObject)
         {
             Material = material;
             Geometry = geometry;

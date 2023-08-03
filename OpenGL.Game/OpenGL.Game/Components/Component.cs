@@ -1,9 +1,4 @@
 ﻿using OpenGL.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenGL.Game.Components
 {
@@ -15,7 +10,7 @@ namespace OpenGL.Game.Components
         protected Transform transform;
         public Transform Transform { get => transform; private set => transform = value; }
 
-        public Component(GameObject gameObject = null)
+        public Component(GameObject gameObject)
         {
             if (gameObject == null) return;
             SetGameObject(gameObject);
@@ -29,6 +24,5 @@ namespace OpenGL.Game.Components
             transform = gameObject.Transform;
             gameObject.AddComponent(this);
         }
-
     }
 }

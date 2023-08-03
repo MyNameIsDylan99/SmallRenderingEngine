@@ -7,11 +7,12 @@ uniform bool enableLighting;
 uniform mat4 lightData;
 
 //directional Light
+uniform bool useDirectional;
+uniform vec3 directionalColor;
 uniform vec3 directionalLight;
 
 uniform sampler2D textureSampler;
 uniform sampler2D alphaSampler;
-
 
 in vec3 position;
 in vec3 normal;
@@ -59,7 +60,6 @@ void main()
    float specularIntensity = lightData[2].w;
    float hardness = lightData[3].w;
 
-
    vec3 baseColor = texture2D(textureSampler, uv).rgb * color;
    float alpha = 1.0 - texture2D(alphaSampler,uv).r;
 
@@ -69,6 +69,10 @@ void main()
 
    float distanceToLight = length(lightPosition-position);
    float k = 1/pow(distanceToLight,2);
+
+   //directional
+   float directionalIntensity = max(dot(directionalLight, normal),0);
+   vec3 directional = directionalIntensity * directionalColor;
 
    // Reflect needs the light direction from the light position to vertex position:
    // L - 2.0 * dot(N, L) * N.
@@ -81,7 +85,12 @@ void main()
    vec3 finalColor = baseColor * color;
 
    if(enableLighting)
+   {
+      if(!useDirectional)
    finalColor *= (ambient + k*(diffuse + specular));
+   else
+   finalColor *= (ambient + k*(diffuse + specular) + directional);
+   }
 
    fragColor = vec4(finalColor, alpha);
 }

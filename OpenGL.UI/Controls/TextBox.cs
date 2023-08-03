@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using OpenGL;
-using OpenGL.Platform;
+﻿using OpenGL.Platform;
 
 namespace OpenGL.UI
 {
@@ -31,6 +27,7 @@ namespace OpenGL.UI
         }
 
         #region Variables
+
         private List<TextBoxEntry> text = new List<TextBoxEntry>();   // the unformatted text
         private List<List<TextBoxEntry>> lines = new List<List<TextBoxEntry>>();
         private List<Text> vaos = new List<Text>();                 // the text VAOs to draw
@@ -38,11 +35,13 @@ namespace OpenGL.UI
 
         private bool dirty = false;
         private int currentLine;
-        #endregion
+
+        #endregion Variables
 
         #region Properties
+
         /// <summary>
-        /// The maximum number of lines of text that can be drawn into 
+        /// The maximum number of lines of text that can be drawn into
         /// this TextBox given the height and font size.
         /// </summary>
         public int MaximumLines { get; private set; }
@@ -51,8 +50,9 @@ namespace OpenGL.UI
         /// The total number of lines of text after formatting (this is how
         /// big the textbox would have to be to show all of the text contained within).
         /// </summary>
-        public int LineCount { get { return lines.Count; } }
-        
+        public int LineCount
+        { get { return lines.Count; } }
+
         /// <summary>
         /// The current line number of the first line of text in this textbox.
         /// This value will normally be zero unless the textbox has been scrolled.
@@ -114,16 +114,19 @@ namespace OpenGL.UI
         public OnMouse OnSelectionChanged { get; set; }
 
         public bool AllowSelection { get; set; }
-        #endregion
+
+        #endregion Properties
 
         #region ScrollBar Support
+
         private static Texture scrollbarTexture;
 
         private int scrollBarDown = -1;
         private bool allowScrollBar, scrollBarMouseDown;
         private Button scrollBar;
 
-        public Button ScrollBar { get { return scrollBar; } }
+        public Button ScrollBar
+        { get { return scrollBar; } }
 
         /// <summary>
         /// Sets whether a scrollbar will be attached to this textbox.
@@ -164,9 +167,11 @@ namespace OpenGL.UI
         }
 
         public Point Padding { get; set; }
-        #endregion
+
+        #endregion ScrollBar Support
 
         #region Constructor
+
         public TextBox(BMFont font, Texture scrollTexture, int selectedLine = -1)
         {
             this.Font = font;
@@ -216,9 +221,11 @@ namespace OpenGL.UI
             });
             this.OnMouseMove = (sender, eventArgs) => scrollBar.OnMouseMove(sender, eventArgs);
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Build VAOs
+
         private void ParseText()
         {
             MaximumLines = (int)Math.Round(Size.Y / (Font.Height * 1.2 + 1));
@@ -322,7 +329,7 @@ namespace OpenGL.UI
             // check if we should show the scrollbar
             if (lines.Count > MaximumLines && allowScrollBar && scrollBar != null)
             {
-                if (scrollBar.Name == null || !UserInterface.Elements.ContainsKey(scrollBar.Name)) 
+                if (scrollBar.Name == null || !UserInterface.Elements.ContainsKey(scrollBar.Name))
                     Parent.AddElement(scrollBar);
             }
             else if (Parent != null && scrollBar != null) Parent.RemoveElement(scrollBar);
@@ -372,9 +379,11 @@ namespace OpenGL.UI
             temp.Padding = new Point(entry.Position, 0);
             vaos.Add(temp);
         }
-        #endregion
+
+        #endregion Build VAOs
 
         #region Public Methods
+
         public override void OnResize()
         {
             base.OnResize();
@@ -404,7 +413,7 @@ namespace OpenGL.UI
 
         public OnMouse OnTextVisible { get; set; }
 
-        public bool TextIsVisible 
+        public bool TextIsVisible
         {
             get { return VisibleCharacters == 0; }
             set
@@ -452,7 +461,7 @@ namespace OpenGL.UI
                 for (int j = 0; j < lines[i + CurrentLine].Count; j++)
                 {
                     if (v >= vaos.Count) break; // the VAO must not be up to date, avoid a crash here
-                    
+
                     vaos[v].CorrectedPosition = new Point(CorrectedPosition.X + Padding.X, (int)(CorrectedPosition.Y - (1.2 * (i + 1) * Font.Height - Size.Y)));
 
                     if (VisibleCharacters <= 0 || characterCount + vaos[v].String.Length <= VisibleCharacters)
@@ -573,6 +582,7 @@ namespace OpenGL.UI
             totalCharacters = 0;
             visibilityTime = 0f;
         }
-        #endregion
+
+        #endregion Public Methods
     }
 }

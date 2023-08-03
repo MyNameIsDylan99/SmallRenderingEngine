@@ -1,20 +1,20 @@
-﻿using System;
-
-using OpenGL;
-using OpenGL.Platform;
+﻿using OpenGL.Platform;
 
 namespace OpenGL.UI
 {
     public class Slider : UIContainer
     {
         #region Variables
+
         private int min = 0, max = 10, value = 0;
         private Button sliderButton;
         private bool sliderMouseDown = false;
         private int sliderDown = -1;
-        #endregion
+
+        #endregion Variables
 
         #region Properties
+
         /// <summary>
         /// The minimum value that the slider can return.
         /// </summary>
@@ -72,9 +72,11 @@ namespace OpenGL.UI
         /// An event that is fired when the value of the slider changes.
         /// </summary>
         public OnMouse OnValueChanged { get; set; }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor
+
         /// <summary>
         /// Creates a slider with a given texture, minimum, maximum and default values.
         /// </summary>
@@ -146,6 +148,7 @@ namespace OpenGL.UI
             sliderButton.Position = new Point(value * (Size.X - sliderButton.Size.X) / (max - min), 0);
             this.AddElement(sliderButton);
         }
-        #endregion
+
+        #endregion Constructor
     }
 }

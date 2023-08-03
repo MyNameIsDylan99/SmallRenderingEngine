@@ -9,8 +9,9 @@ namespace OpenGL
     public class BitmapFont : IDisposable
     {
         #region Properties
+
         public Texture FontTexture { get; private set; }
-        
+
         public struct UVPair
         {
             public Vector2 Topleft;
@@ -24,9 +25,11 @@ namespace OpenGL
         }
 
         public UVPair[] Character { get; private set; }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor
+
         /// <summary>
         /// Creates a bitmap font object, which is created from a h by v array of bitmap characters.
         /// </summary>
@@ -42,7 +45,7 @@ namespace OpenGL
 
             float delx = (float)FontTexture.Size.Width / h;
             float dely = (float)FontTexture.Size.Height / v;
-            
+
             Character = new UVPair[h * v];
             for (int x = 0; x < h; x++)
             {
@@ -59,9 +62,11 @@ namespace OpenGL
         {
             Dispose(false);
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         public VAO CreateString(ShaderProgram Program, string Text)
         {
             Vector3[] vertices = new Vector3[Text.Length * 4];
@@ -108,9 +113,11 @@ namespace OpenGL
         {
             FontTexture.Dispose();
         }
-        #endregion
+
+        #endregion Methods
 
         #region Sample Shader
+
         public static string vertexShader2Source = @"
 #version 400
 
@@ -125,7 +132,7 @@ out vec2 uv;
 void main(void)
 {
   uv = in_uv;
-  
+
   gl_Position = projection_matrix * modelview_matrix * vec4(in_position, 1);
 }";
 
@@ -144,6 +151,7 @@ void main(void)
   vec4 t = texture2D(active_texture, uv);
   fragColor = t * vec4(color, t.r);
 }";
-        #endregion
+
+        #endregion Sample Shader
     }
 }

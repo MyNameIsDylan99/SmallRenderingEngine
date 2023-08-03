@@ -5,23 +5,41 @@ public static class InputHelper
 {
     #region Delegates and Events
 
-
-
     public static event Action<bool> ButtonWPressedEvent;
+
     public static event Action<bool> ButtonAPressedEvent;
+
     public static event Action<bool> ButtonSPressedEvent;
+
     public static event Action<bool> ButtonDPressedEvent;
+
     public static event Action<bool> ButtonQPressedEvent;
+
     public static event Action<bool> ButtonEPressedEvent;
+
     public static event Action<bool> ButtonLPressedEvent;
+
     public static event Action<bool> ButtonEscapePressedEvent;
+
     public static event Action<bool> ButtonSpacePressedEvent;
+
     public static event Action<bool> ButtonUpArrowPressedEvent;
+
     public static event Action<bool> ButtonDownArrowPressedEvent;
+
     public static event Action<bool> ButtonLeftArrowPressedEvent;
+
     public static event Action<bool> ButtonRightArrowPressedEvent;
 
-    public static event Action<int,int> MouseMoveEvent;
+    /// <summary>
+    /// This event contains the moveDelta of the x and y axis of the mouse movement and is only called if CursorRestriction.IsCursorRestricted equals true ;
+    /// </summary>
+    public static event Action<int, int> MouseMoveEvent;
+
+    /// <summary>
+    /// This event contains the x and y positions of the cursor last frame and of the current frame and is always called.
+    /// </summary>
+    public static event Action<int, int, int, int> MouseMoveEventFullSignature;
 
     #endregion Delegates and Events
 
@@ -73,8 +91,10 @@ public static class InputHelper
         Input.Subscribe((char)ConsoleKey.Spacebar, new Event(OnSpaceChanged));
 
         Input.Subscribe((char)27, new Event(OnEscapeChanged));
+        ButtonEscapePressedEvent += CursorRestriction.OnEscapeChanged;
 
         Input.MouseMove = new Event(MouseMove);
+        MouseMoveEventFullSignature += CursorRestriction.OnMouseMove;
     }
 
     private static void OnWChanged(bool isPressed)
@@ -146,10 +166,6 @@ public static class InputHelper
     {
         if (ButtonEscapePressedEvent != null)
             ButtonEscapePressedEvent(isPressed);
-
-        CursorRestriction.ReleaseCursor();
-        Window.ShowCursor(true);
-        Window.OnClose();
     }
 
     private static void OnUpChanged(bool isPressed)
@@ -186,6 +202,11 @@ public static class InputHelper
 
     private static void MouseMove(int lx, int ly, int x, int y)
     {
+        if (MouseMoveEventFullSignature != null)
+            MouseMoveEventFullSignature(lx, ly, x, y);
+
+        if (!CursorRestriction.IsCursorRestricted) return;
+
         var moveDeltaX = x - lx;
         var moveDeltaY = y - ly;
 
@@ -197,19 +218,5 @@ public static class InputHelper
 
         if (MouseMoveEvent != null)
             MouseMoveEvent(moveDeltaX, moveDeltaY);
-
-        //game.CameraRotation += new Vector3(moveDeltaY, moveDeltaX, 0) * Time.DeltaTime * game.RotationSpeed;
-
-        if (x == Window.Width - 1)
-            Window.WarpPointer(1, y);
-
-        if (x == 0)
-            Window.WarpPointer(Window.Width - 2, y);
-
-        if (y == Window.Height - 1)
-            Window.WarpPointer(x, 1);
-
-        if (y == 0)
-            Window.WarpPointer(x, Window.Height - 2);
     }
 }

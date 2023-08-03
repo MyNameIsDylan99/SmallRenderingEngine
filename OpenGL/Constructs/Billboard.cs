@@ -9,6 +9,7 @@ namespace OpenGL
     public class Billboard : IDisposable
     {
         #region Properties
+
         public ShaderProgram Program { get; private set; }
 
         public Texture Texture { get; private set; }
@@ -16,9 +17,11 @@ namespace OpenGL
         private VAO billboard;
 
         private Vector4 Color { get; set; }
-        #endregion
+
+        #endregion Properties
 
         #region Constructors
+
         public Billboard(ShaderProgram program, Texture texture, Vector3 location, float size)
             : this(program, texture, new Vector3[] { location }, new Vector3[] { new Vector3(1, 1, 1) })
         {
@@ -44,9 +47,11 @@ namespace OpenGL
         {
             Dispose(false);
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         public void Draw()
         {
             // set up the shader program
@@ -73,9 +78,11 @@ namespace OpenGL
             Texture.Dispose();
             billboard.Dispose();
         }
-        #endregion
+
+        #endregion Methods
 
         #region Sample Shader Code
+
         public static string vertexShaderSource = @"
 #version 400
 
@@ -108,6 +115,7 @@ void main(void)
 {
   fragColor = color * texture2D(tex0, gl_PointCoord.st);
 }";
-        #endregion
+
+        #endregion Sample Shader Code
     }
 }

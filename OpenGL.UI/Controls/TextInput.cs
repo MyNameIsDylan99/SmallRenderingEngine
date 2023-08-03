@@ -1,18 +1,18 @@
-﻿using System;
-
-using OpenGL;
-using OpenGL.Platform;
+﻿using OpenGL.Platform;
 
 namespace OpenGL.UI
 {
     public class TextInput : UIContainer
     {
         #region Variables
+
         private Text text;
         private bool hasFocus = false;
-        #endregion
+
+        #endregion Variables
 
         #region Properties
+
         /// <summary>
         /// CarriageReturn callback delegate prototype.
         /// </summary>
@@ -37,9 +37,11 @@ namespace OpenGL.UI
         {
             get { return text.String; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor
+
         public TextInput(BMFont font, string s = "")
             : base(new Point(0, 0), new Point(200, font.Height), "TextEntry" + UserInterface.GetUniqueElementID())
         {
@@ -92,7 +94,7 @@ namespace OpenGL.UI
                             hasFocus = false;
 
                             Input.PopKeyBindings();
-                        }); 
+                        });
                 });
 
             this.AddElement(text);
@@ -114,6 +116,7 @@ namespace OpenGL.UI
         {
             text.String = String.Empty;
         }
-        #endregion
+
+        #endregion Constructor
     }
 }

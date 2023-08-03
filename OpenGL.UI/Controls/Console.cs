@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using OpenGL;
-using OpenGL.Platform;
-
-namespace OpenGL.UI
+﻿namespace OpenGL.UI
 {
     public class Console : UIContainer
     {
@@ -71,6 +65,7 @@ namespace OpenGL.UI
         }
 
         #region Write Methods
+
         public void Write(string message)
         {
             Write(Vector3.One, message);
@@ -105,6 +100,7 @@ namespace OpenGL.UI
         {
             textBox.Clear();
         }
-        #endregion
+
+        #endregion Write Methods
     }
 }

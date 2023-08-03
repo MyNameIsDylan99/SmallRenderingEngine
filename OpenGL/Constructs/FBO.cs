@@ -8,6 +8,7 @@ namespace OpenGL
     public class FBO : IDisposable
     {
         #region Properties
+
         /// <summary>
         /// The ID for the entire framebuffer object.
         /// </summary>
@@ -42,9 +43,11 @@ namespace OpenGL
         /// Specifies whether to build mipmaps after the frame buffer is unbound.
         /// </summary>
         public bool MipMaps { get; private set; }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor and Destructor
+
         /// <summary>
         /// Creates a framebuffer object and its associated resources (depth and frame buffers).
         /// </summary>
@@ -162,9 +165,11 @@ namespace OpenGL
         {
             Dispose(false);
         }
-        #endregion
+
+        #endregion Constructor and Destructor
 
         #region Enable and Disable
+
         /// <summary>
         /// Binds the framebuffer and all of the renderbuffers.
         /// Clears the buffer bits and sets viewport size.
@@ -223,9 +228,11 @@ namespace OpenGL
                 Gl.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             }
         }
-        #endregion
+
+        #endregion Enable and Disable
 
         #region IDisposable
+
         public void Dispose()
         {
             Dispose(true);
@@ -245,9 +252,11 @@ namespace OpenGL
                 TextureID = null;
             }
         }
-        #endregion
+
+        #endregion IDisposable
 
         #region Sample Shader
+
         public static string vertexShaderSource = @"
 #version 330
 
@@ -267,7 +276,7 @@ void main(void)
   vec4 pos1 = projection_matrix * modelview_matrix * vec4(in_position, 1);
 
   uv = in_uv;
-  
+
   gl_Position = mix(pos2, pos1, animation_factor);
 }";
 
@@ -284,6 +293,7 @@ void main(void)
 {
   out_frag_color = mix(texture2D(active_texture, uv), vec4(1, 1, 1, 1), 0.05);
 }";
-        #endregion
+
+        #endregion Sample Shader
     }
 }

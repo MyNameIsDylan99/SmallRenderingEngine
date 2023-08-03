@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using OpenGL;
+﻿using System.Text;
 
 namespace OpenGL.UI
 {
-    internal static class Shaders
+    public static class Shaders
     {
         public static ShaderProgram SolidUIShader;
         public static ShaderProgram TexturedUIShader;
@@ -44,7 +40,7 @@ namespace OpenGL.UI
             catch (Exception)
             {
             }
-            
+
             return initialized;
         }
 
@@ -118,6 +114,7 @@ namespace OpenGL.UI
         }
 
         #region UI Shader Source
+
         private static string UITexturedVertexSource = @"
 #version 140
 
@@ -132,7 +129,7 @@ out vec2 uv;
 void main(void)
 {
   uv = in_uv;
-  
+
   gl_Position = ui_projection_matrix * vec4(position + in_position, 1);
 }";
 
@@ -306,6 +303,7 @@ void main(void)
   }
   else gl_FragColor = vec4(0, 0, 0, 0);
 }";
-        #endregion
+
+        #endregion UI Shader Source
     }
 }

@@ -13,13 +13,16 @@ namespace OpenGL
         private Vector4 row1, row2, row3, row4;
 
         #region Static Constructors
+
         public static Matrix4 Identity
         {
             get { return new Matrix4(Vector4.UnitX, Vector4.UnitY, Vector4.UnitZ, Vector4.UnitW); }
         }
-        #endregion
+
+        #endregion Static Constructors
 
         #region Operators
+
         public static Matrix4 operator +(Matrix4 m1, Matrix4 m2)
         {
             return new Matrix4(m1.row1 + m2.row1, m1.row2 + m2.row2, m1.row3 + m2.row3, m1.row4 + m2.row4);
@@ -32,7 +35,6 @@ namespace OpenGL
 
         public static Matrix4 operator *(Matrix4 m, Matrix4 m2)
         {
-
             Matrix4 r = new Matrix4(
             new Vector4(m[0].X * m2[0].X + m[0].Y * m2[1].X + m[0].Z * m2[2].X + m[0].W * m2[3].X,
                 m[0].X * m2[0].Y + m[0].Y * m2[1].Y + m[0].Z * m2[2].Y + m[0].W * m2[3].Y,
@@ -202,9 +204,11 @@ namespace OpenGL
         {
             return "[ " + row1.ToString() + " ] [ " + row2.ToString() + " ] [ " + row3.ToString() + " ] [ " + row4.ToString() + " ]";
         }
-        #endregion
+
+        #endregion Operators
 
         #region Constructors
+
         public Matrix4(Matrix4 existingMatrix)
         {
             row1 = existingMatrix[0];
@@ -244,9 +248,11 @@ namespace OpenGL
             row3 = v2;
             row4 = v3;
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         /// <summary>
         /// Creates a matrix which contains information on how to translate.
         /// </summary>
@@ -504,7 +510,7 @@ namespace OpenGL
                 original.SwapRows(k, j);
                 identity.SwapRows(k, j);
 
-                if (original[j].Get(j) == 0.0f) 
+                if (original[j].Get(j) == 0.0f)
                     throw new Exception("Matrix4 was a singular matrix and cannot be inverted.");
 
                 identity[j] /= original[j].Get(j);
@@ -558,6 +564,7 @@ namespace OpenGL
             Vector4 axisangle = rotation.ToAxisAngle();
             return CreateFromAxisAngle(new Vector3(axisangle.X, axisangle.Y, axisangle.Z), rotation.W);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

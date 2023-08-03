@@ -8,15 +8,18 @@ namespace OpenGL
     public partial class Gl
     {
         #region Fields
+
         //internal const string Library = "libGL.so.1";	// linux
         internal const string Library = "opengl32.dll";	// mac os x and windows
 
         private static Type delegatesClass;
         private static Type coreClass;
         private static FieldInfo[] delegates;
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         static Gl()
         {
             delegatesClass = typeof(Gl.Delegates);
@@ -26,9 +29,11 @@ namespace OpenGL
             if (Core.FunctionMap != null) { }
             ReloadFunctions();
         }
-        #endregion
+
+        #endregion Constructor
 
         #region internal static partial class Core
+
         /// <summary>
         /// Contains DllImports for the core OpenGL functions.
         /// </summary>
@@ -38,6 +43,7 @@ namespace OpenGL
             ///  Build a string->MethodInfo map to speed up extension loading.
             /// </summary>
             internal static SortedList<string, MethodInfo> FunctionMap;  // This is faster than either Dictionary or SortedDictionary
+
             static Core()
             {
                 FunctionMap = new SortedList<string, MethodInfo>();
@@ -48,9 +54,11 @@ namespace OpenGL
                 }
             }
         }
-        #endregion
+
+        #endregion internal static partial class Core
 
         #region public static void ReloadFunctions()
+
         /// <summary>
         /// Loads all OpenGL functions (core and extensions).
         /// </summary>
@@ -83,9 +91,11 @@ namespace OpenGL
                 //if (f.GetValue(null) == null) Console.WriteLine("Failed to load extension {0}.", f.Name);
             }
         }
-        #endregion
+
+        #endregion public static void ReloadFunctions()
 
         #region public static bool ReloadFunction(string function)
+
         /// <summary>
         /// Tries to reload the given OpenGL function (core or extension).
         /// </summary>
@@ -132,9 +142,11 @@ namespace OpenGL
             }
             return @new != null;
         }
-        #endregion
+
+        #endregion public static bool ReloadFunction(string function)
 
         #region public static Delegate GetDelegate(string name, Type signature)
+
         /// <summary>
         /// Creates a System.Delegate that can be used to call an OpenGL function, core or extension.
         /// </summary>
@@ -151,9 +163,11 @@ namespace OpenGL
                   (Core.FunctionMap.TryGetValue((name.Substring(2)), out m) ?
                    m.CreateDelegate(signature) : null);
         }
-        #endregion
+
+        #endregion public static Delegate GetDelegate(string name, Type signature)
 
         #region internal static Delegate GetExtensionDelegate(string name, Type signature)
+
         /// <summary>
         /// Creates a System.Delegate that can be used to call a dynamically exported OpenGL function.
         /// </summary>
@@ -180,9 +194,11 @@ namespace OpenGL
 #pragma warning restore 0618
             }
         }
-        #endregion
+
+        #endregion internal static Delegate GetExtensionDelegate(string name, Type signature)
 
         #region private static IntPtr GetAddress(string function)
+
         internal partial class NativeMethods
         {
             [DllImport(Library, EntryPoint = "wglGetProcAddress", ExactSpelling = true)]
@@ -193,8 +209,10 @@ namespace OpenGL
 
             [DllImport("libdl.dylib", EntryPoint = "NSIsSymbolNameDefined")]
             internal static extern bool NSIsSymbolNameDefined(string s);
+
             [DllImport("libdl.dylib", EntryPoint = "NSLookupAndBindSymbol")]
             internal static extern IntPtr NSLookupAndBindSymbol(string s);
+
             [DllImport("libdl.dylib", EntryPoint = "NSAddressOfSymbol")]
             internal static extern IntPtr NSAddressOfSymbol(IntPtr symbol);
         }
@@ -281,6 +299,7 @@ namespace OpenGL
 
             return getProcAddress.GetProcAddress(function);
         }
-        #endregion
+
+        #endregion private static IntPtr GetAddress(string function)
     }
 }

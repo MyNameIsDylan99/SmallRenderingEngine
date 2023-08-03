@@ -1,19 +1,24 @@
 ﻿using System;
+
 #if USE_NUMERICS
 using System.Numerics;
 #else
+
 using System.Runtime.InteropServices;
+
 #endif
 
 namespace OpenGL
 {
 #if !USE_NUMERICS
+
     [StructLayout(LayoutKind.Sequential)]
     public struct Vector2 : IEquatable<Vector2>
     {
         public float X, Y;
 
         #region Static Constructors
+
         public static Vector2 Zero
         {
             get { return new Vector2(0.0f, 0.0f); }
@@ -33,9 +38,11 @@ namespace OpenGL
         {
             get { return new Vector2(0.0f, 1.0f); }
         }
-        #endregion
+
+        #endregion Static Constructors
 
         #region Operators
+
         public static Vector2 operator +(Vector2 v1, Vector2 v2)
         {
             return new Vector2(v1.X + v2.X, v1.Y + v2.Y);
@@ -110,9 +117,11 @@ namespace OpenGL
         {
             return (v1.X != v2.X || v1.Y != v2.Y);
         }
-        #endregion
+
+        #endregion Operators
 
         #region Constructors
+
         /// <summary>Creates a Vector2 structure whose elements have the specified values.</summary>
         /// <param name="x">The value to assign to the X field.</param>
         /// <param name="y">The value to assign to the Y field.</param>
@@ -127,9 +136,11 @@ namespace OpenGL
         {
             X = Y = value;
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Overrides
+
         public override bool Equals(object obj)
         {
             if (!(obj is Vector2)) return false;
@@ -173,10 +184,10 @@ namespace OpenGL
 
         public float this[int a]
         {
-            get 
+            get
             {
                 if (a > 1 || a < 0) throw new ArgumentOutOfRangeException();
-                return (a == 0) ? X : Y; 
+                return (a == 0) ? X : Y;
             }
             set
             {
@@ -185,9 +196,11 @@ namespace OpenGL
                 else throw new ArgumentOutOfRangeException();
             }
         }
-        #endregion
+
+        #endregion Overrides
 
         #region Properties
+
         /// <summary>
         /// Get the length of the Vector2 structure.
         /// </summary>
@@ -220,9 +233,11 @@ namespace OpenGL
         {
             get { return new Vector2(-Y, X); }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Converts a Vector2 to a float array.  Useful for vector commands in GL.
         /// </summary>
@@ -329,8 +344,10 @@ namespace OpenGL
             array[offset + 0] = X;
             array[offset + 1] = Y;
         }
-        #endregion
+
+        #endregion Methods
     }
+
 #endif
 
     /// <summary>

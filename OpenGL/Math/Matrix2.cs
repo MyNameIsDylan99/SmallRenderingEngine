@@ -13,6 +13,7 @@ namespace OpenGL
         private Vector2 row1, row2;
 
         #region Properties
+
         /// <summary>
         /// Returns the determinant of this matrix.
         /// </summary>
@@ -20,16 +21,20 @@ namespace OpenGL
         {
             get { return this[0].X * this[1].Y - this[0].Y * this[1].X; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Static Constructors
+
         public static Matrix2 Identity
         {
             get { return new Matrix2(Vector2.UnitX, Vector2.UnitY); }
         }
-        #endregion
+
+        #endregion Static Constructors
 
         #region Operators
+
         public static Matrix2 operator +(Matrix2 m1, Matrix2 m2)
         {
             return new Matrix2(m1.row1 + m2.row1, m1.row2 + m2.row2);
@@ -94,7 +99,7 @@ namespace OpenGL
                 {
                     return row1.Get(column);
                 }
-                else if(row == 1)
+                else if (row == 1)
                 {
                     return row2.Get(column);
                 }
@@ -152,9 +157,11 @@ namespace OpenGL
         {
             return "[ " + row1.ToString() + " ] [ " + row2.ToString() + " ]";
         }
-        #endregion
+
+        #endregion Operators
 
         #region Constructors
+
         /// <summary>
         /// Creates an identical copy of a Matrix2.
         /// </summary>
@@ -226,9 +233,11 @@ namespace OpenGL
             row1 = v0;
             row2 = v1;
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         /// <summary>
         /// Creates a matrix which contains information on how to rotate.
         /// </summary>
@@ -243,7 +252,6 @@ namespace OpenGL
                 new Vector2(cos, -sin),
                 new Vector2(sin, cos));
         }
-
 
         /// <summary>
         /// Creates the inverse matrix if it has any. If no inverse matrix exists then it throws an error.
@@ -270,6 +278,7 @@ namespace OpenGL
         {
             return new float[] { this[0].X, this[0].Y, this[1].X, this[1].Y };
         }
-        #endregion
+
+        #endregion Methods
     }
 }

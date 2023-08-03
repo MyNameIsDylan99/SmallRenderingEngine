@@ -1,19 +1,24 @@
 ﻿using System;
+
 #if USE_NUMERICS
 using System.Numerics;
 #else
+
 using System.Runtime.InteropServices;
+
 #endif
 
 namespace OpenGL
 {
 #if !USE_NUMERICS
+
     [StructLayout(LayoutKind.Sequential)]
     public struct Vector3 : IEquatable<Vector3>
     {
         public float X, Y, Z;
 
         #region Static Constructors
+
         public static Vector3 Zero
         {
             get { return new Vector3(0.0f, 0.0f, 0.0f); }
@@ -38,9 +43,11 @@ namespace OpenGL
         {
             get { return new Vector3(1.0f, 1.0f, 1.0f); }
         }
-        #endregion
+
+        #endregion Static Constructors
 
         #region Operators
+
         public static Vector3 operator +(Vector3 v1, Vector3 v2)
         {
             return new Vector3(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
@@ -115,17 +122,19 @@ namespace OpenGL
         {
             return (v1.X != v2.X || v1.Y != v2.Y || v1.Z != v2.Z);
         }
-        #endregion
+
+        #endregion Operators
 
         #region Constructors
+
         /// <summary>Creates a Vector3 structure whose elements have the specified values.</summary>
         /// <param name="x">The value to assign to the X field.</param>
         /// <param name="y">The value to assign to the Y field.</param>
         /// <param name="z">The value to assign to the Z field.</param>
         public Vector3(float x, float y, float z)
         {
-            X = x; 
-            Y = y; 
+            X = x;
+            Y = y;
             Z = z;
         }
 
@@ -145,9 +154,11 @@ namespace OpenGL
             Y = v.Y;
             Z = z;
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Overrides
+
         public override bool Equals(object obj)
         {
             if (!(obj is Vector3)) return false;
@@ -190,10 +201,10 @@ namespace OpenGL
 
         public float this[int a]
         {
-            get 
+            get
             {
                 if (a > 2 || a < 0) throw new ArgumentOutOfRangeException();
-                return (a == 0) ? X : (a == 1) ? Y : Z; 
+                return (a == 0) ? X : (a == 1) ? Y : Z;
             }
             set
             {
@@ -203,9 +214,11 @@ namespace OpenGL
                 else throw new ArgumentOutOfRangeException();
             }
         }
-        #endregion
+
+        #endregion Overrides
 
         #region Methods
+
         /// <summary>
         /// Converts a Vector3 to a float array.  Useful for vector commands in GL.
         /// </summary>
@@ -239,9 +252,9 @@ namespace OpenGL
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        public float Dot(Vector3 v) 
-        { 
-            return Vector3.Dot(this, v); 
+        public float Dot(Vector3 v)
+        {
+            return Vector3.Dot(this, v);
         }
 
         /// <summary>
@@ -357,7 +370,7 @@ namespace OpenGL
         /// Vector3 and a destination Vector3.
         /// </summary>
         /// <param name="destination">The vector we would like to rotate to.</param>
-        /// <returns>A quaternion representing the axis of rotation between this vector 
+        /// <returns>A quaternion representing the axis of rotation between this vector
         /// and the destination vector.</returns>
         public Quaternion GetRotationTo(Vector3 destination)
         {
@@ -604,8 +617,10 @@ namespace OpenGL
             array[offset + 1] = Y;
             array[offset + 2] = Z;
         }
-        #endregion
+
+        #endregion Methods
     }
+
 #endif
 
     /// <summary>
