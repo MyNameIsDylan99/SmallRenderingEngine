@@ -83,6 +83,8 @@ namespace OpenGL.Game.Components
 
             currentlySelectedMovementController.MovementEnabled = true;
             currentlySelectedMovementController.RotationEnabled = true;
+
+            ChangeUITextToSelectedController();
         }
     }
 }

@@ -20,6 +20,8 @@ namespace OpenGL.Game.Components
 
         public void Render()
         {
+
+            //Binding the textures before drawing
             for (int i = 0; i < MeshTextures.Count; i++)
             {
                 Gl.BindTextureUnit((uint)i, MeshTextures[i].TextureID);

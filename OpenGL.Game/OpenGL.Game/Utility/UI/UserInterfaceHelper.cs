@@ -10,6 +10,7 @@ public class UserInterfaceHelper
     public Text lightingOnText;
     public Text currentlySelectedText;
     public Text currentlySelectedTitle;
+    public Text useBlinnText;
 
     private Game game;
 
@@ -47,6 +48,11 @@ public class UserInterfaceHelper
         currentlySelectedText.RelativeTo = Corner.TopRight;
         currentlySelectedText.Position = new Point(10, 150);
 
+        useBlinnText = new Text(Shaders.FontShader, BMFont.LoadFont("fonts/segoe_ui24.fnt"), "Using Phong", BMFont.Justification.Right);
+        useBlinnText.RelativeTo = Corner.TopRight;
+        useBlinnText.Position = new Point(10, 200);
+
+
         CreatePauseMenu();
         InputHelper.ButtonEscapePressedEvent += OnEscapeChanged;
 
@@ -55,6 +61,7 @@ public class UserInterfaceHelper
         UserInterface.AddElement(lightingOnText);
         UserInterface.AddElement(currentlySelectedTitle);
         UserInterface.AddElement(currentlySelectedText);
+        UserInterface.AddElement(useBlinnText);
 
         IsUIInitalized = true;
     }
@@ -87,7 +94,7 @@ public class UserInterfaceHelper
 
             var button = new Button(120, 50);
             button.RelativeTo = Corner.Center;
-            button.Position = new Point(50, multiplier * value);
+            button.Position = new Point(0, multiplier * value);
             button.BackgroundColor = buttonNormalColor;
             button.Font = BMFont.LoadFont("fonts/segoe_ui16.fnt");
             button.OnMouseEnter += OnMouseEnter;
@@ -104,16 +111,17 @@ public class UserInterfaceHelper
                 case 1:
                     button.OnMouseClick += (s, e) => game.ToggleDirectionalLighting();
                     button.Text = "Toggle directional lighting";
+                    button.Font = BMFont.LoadFont("fonts/segoe_ui12.fnt");
                     break;
 
                 case 2:
-                    button.OnMouseClick += OnMouseClick;
-                    button.Text = "Close application" + i;
+                    button.OnMouseClick += (s, e) => game.ToggleBlinnLighting();
+                    button.Text = "Toggle blinn lighting";
                     break;
 
                 case 3:
                     button.OnMouseClick += OnMouseClick;
-                    button.Text = "Close application" + i;
+                    button.Text = "";
                     break;
             }
 

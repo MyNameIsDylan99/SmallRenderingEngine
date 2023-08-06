@@ -5,6 +5,7 @@ uniform vec3 color;
 //Lighting parameters
 uniform bool enableLighting;
 uniform mat4 lightData;
+uniform bool useBlinn;
 
 //directional Light
 uniform bool useDirectional;
@@ -72,9 +73,14 @@ void main()
    float directionalIntensity = max(dot(directionalLight, normal),0);
    vec3 directional = directionalIntensity * directionalColor;
 
+   vec3 reflectionDirection;
+
    // Reflect needs the light direction from the light position to vertex position:
    // L - 2.0 * dot(N, L) * N.
-   vec3 reflectionDirection = reflect(-lightDirection, normal);
+   if(!useBlinn)
+   reflectionDirection = reflect(-lightDirection, normal);
+   else
+   reflectionDirection = normalize(viewDirection + lightDirection);
 
    vec3 ambient = ambientReflection(ambientIntensity, 1.0f, ambientLightColor);
    vec3 diffuse = diffuseReflection(diffuseIntensity,1.0f,pointLightColor,lightDirection,normal);

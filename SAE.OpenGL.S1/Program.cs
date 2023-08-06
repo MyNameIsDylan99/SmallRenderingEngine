@@ -271,11 +271,12 @@ namespace SAEOpenGL.S1
             MovementControllerManager movementControllerManager = new MovementControllerManager(cameraObject);
             Camera cameraComponent = new Camera(cameraObject);
             MovementController cameraController = new MovementController(cameraObject);
-            movementControllerManager.MakeControllerActive(cameraController);
 
             var lightObject = new GameObject("Light source", game, new MeshRenderer(lightMaterial, geo_light));
             PointLight pointLight = new PointLight(lightObject);
             MovementController lightController = new MovementController(lightObject, true);
+
+            movementControllerManager.MakeControllerActive(cameraController);
 
             GameObject obj_cottage = new GameObject("Cottage", game, new MeshRenderer(cottageMaterial, geo_cottage, cottageTextures));
             GameObject obj_gear = new GameObject("Gear", game, new MeshRenderer(gearMaterial, geo_gear, gearTextures));

@@ -22,6 +22,7 @@ namespace OpenGL.Game
         private bool useDirectionalLight = false;
 
         public bool EnableLighting = true;
+        private bool useBlinn = false;
 
         //Global shader color
         public Vector3 Color = new Vector3(1, 1, 1);
@@ -37,7 +38,7 @@ namespace OpenGL.Game
         }
 
         private float ambientIntensity = 0.3f;
-        private Vector3 ambientColor = new Vector3(0.75f, 0.75f, 1.0f);
+        public Vector3 AmbientColor = new Vector3(0.75f, 0.75f, 1.0f);
         private float hardness = 64.0f;
 
         private Matrix4 GetLightDataMatrix()
@@ -49,7 +50,7 @@ namespace OpenGL.Game
                 lightDataMatrix.SetMatrix
                     (
                     new Vector4(light.Transform.Position, ambientIntensity),
-                    new Vector4(ambientColor, light.diffuseIntensity),
+                    new Vector4(AmbientColor, light.diffuseIntensity),
                     new Vector4(light.lightColor, light.specularIntensity),
                     new Vector4(MainCamera.Transform.Position, hardness)
                     );
@@ -116,6 +117,8 @@ namespace OpenGL.Game
             //Since the light object has a different shader that doesn't have a tangent to world uniform, we won't pass it to the light source
             if (!obj.HasComponent<PointLight>())
             {
+                //TODO: Use matrices to pass data to shader
+
                 material["color"].SetValue(Color);
                 material["enableLighting"].SetValue(EnableLighting);
                 material["tangentToWorld"].SetValue(tangentToWorld);
@@ -123,6 +126,7 @@ namespace OpenGL.Game
                 material["directionalLight"].SetValue(directionalLight);
                 material["directionalColor"].SetValue(directionalColor);
                 material["useDirectional"].SetValue(useDirectionalLight);
+                material["useBlinn"].SetValue(useBlinn);
             }
             else
             {
@@ -151,6 +155,16 @@ namespace OpenGL.Game
         public void ToggleDirectionalLighting()
         {
             useDirectionalLight = !useDirectionalLight;
+        }
+
+        public void ToggleBlinnLighting()
+        {
+            useBlinn = !useBlinn;
+
+            if(useBlinn)
+                UserInterfaceHelper.useBlinnText.String = "Using Blinn";
+            else
+                UserInterfaceHelper.useBlinnText.String = "Using Phong";
         }
     }
 }
