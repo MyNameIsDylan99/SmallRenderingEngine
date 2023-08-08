@@ -1,5 +1,6 @@
 ﻿using OpenGL.Game.Components;
 using OpenGL.Mathematics;
+using System;
 using System.Collections.Generic;
 
 namespace OpenGL.Game
@@ -18,13 +19,24 @@ namespace OpenGL.Game
 
         public GameObject(string name, Game game, MeshRenderer renderer = null)
         {
-            this.Renderer = renderer;
+            AddComponent(renderer);
+            //this.Renderer = renderer;
+            //renderer.AttachToGameObject(this);
+
             this.Name = name;
             this.game = game;
         }
 
         public void Initialize()
         {
+        }
+
+        public void Start()
+        {
+            foreach (var component in components)
+            {
+                component.OnStart();
+            }
         }
 
         public void Update()
@@ -37,6 +49,15 @@ namespace OpenGL.Game
 
         public void AddComponent(Component component)
         {
+            if (component == null)
+                return;
+
+            if(component.GetType() == typeof(MeshRenderer))
+            {
+                this.Renderer = component as MeshRenderer;
+            }
+
+            component.AttachToGameObject(this);
             components.Add(component);
         }
 

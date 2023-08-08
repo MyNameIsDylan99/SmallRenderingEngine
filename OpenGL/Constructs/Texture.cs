@@ -22,6 +22,12 @@ namespace OpenGL
 
         #region Constructors
 
+        public Texture(string[] fileNames)
+        {
+            LoadCubeMap(fileNames);
+
+            Gl.BindTexture(TextureTarget, 0);
+        }
         /// <summary>
         /// Create a texture from the supplied filename.
         /// Any files that Bitmap.FromFile can open are supported.
@@ -132,6 +138,48 @@ namespace OpenGL
                 image.UnlockBits(imageData);
             }
         }
+        private void LoadCubeMap(string[] filenames, bool flipy = true)
+        {
+                TextureTarget = TextureTarget.TextureCubeMap;
+                TextureID = Gl.GenTexture();
+
+                Gl.PixelStorei(PixelStoreParameter.UnpackAlignment, 1); // set pixel alignment
+                Gl.BindTexture(TextureTarget, TextureID);     // bind the texture to memory in OpenGL
+
+            for (int i = 0;  i < filenames.Length;  i++)
+            {
+            using (Bitmap image = (Bitmap)Image.FromFile(filenames[i]))
+            {
+                Size = new Size(image.Width, image.Height);
+
+                if (flipy)
+                {
+                    image.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                }
+
+                // must be Format32bppArgb file format, so convert it if it isn't in that format
+                BitmapData imageData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                Gl.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba8, image.Width, image.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, imageData.Scan0);
+
+#if MEMORY_LOGGER
+                MemoryLogger.AllocateTexture(TextureID, Size);
+#endif
+
+                image.UnlockBits(imageData);
+            }
+
+            }
+
+                Gl.TexParameteri(TextureTarget, TextureParameterName.TextureMagFilter, TextureParameter.Linear);
+                Gl.TexParameteri(TextureTarget, TextureParameterName.TextureMinFilter, TextureParameter.Linear);
+                Gl.TexParameteri(TextureTarget, TextureParameterName.TextureWrapS, TextureParameter.ClampToEdge);
+                Gl.TexParameteri(TextureTarget, TextureParameterName.TextureWrapT, TextureParameter.ClampToEdge);
+                Gl.TexParameteri(TextureTarget, TextureParameterName.TextureWrapR, TextureParameter.ClampToEdge);
+
+        }
+
+
 
         /// <summary>
         /// Loads a compressed DDS file into an OpenGL texture.

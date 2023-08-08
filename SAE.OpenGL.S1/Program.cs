@@ -16,7 +16,63 @@ namespace SAEOpenGL.S1
         private static int Width { get => game.Width; set => game.Width = value; }
         private static int Height { get => game.Height; set => game.Height = value; }
 
-        private static bool controlLight = false;
+        #region Skybox
+
+    private static Vector3[] skyboxVertices = new Vector3[]
+        {
+    // Front face
+    new Vector3(-1.0f, -1.0f, -1.0f),
+    new Vector3(-1.0f,  1.0f, -1.0f),
+    new Vector3( 1.0f,  1.0f, -1.0f),
+    new Vector3( 1.0f, -1.0f, -1.0f),
+
+    // Back face
+    new Vector3(-1.0f, -1.0f,  1.0f),
+    new Vector3(-1.0f,  1.0f,  1.0f),
+    new Vector3( 1.0f,  1.0f,  1.0f),
+    new Vector3( 1.0f, -1.0f,  1.0f)
+        };
+
+        private static uint[] skyboxIndices = new uint[]
+        {
+    // Front face
+    0, 1, 2,
+    2, 3, 0,
+
+    // Back face
+    5, 4, 7,
+    7, 6, 5,
+
+    // Left face
+    4, 0, 3,
+    3, 7, 4,
+
+    // Right face
+    1, 5, 6,
+    6, 2, 1,
+
+    // Top face
+    1, 0, 4,
+    4, 5, 1,
+
+    // Bottom face
+    2, 6, 7,
+    7, 3, 2
+
+        };
+
+
+        private static string[] skyboxFilenames = new string[]
+        {
+         "textures/right.jpg",
+         "textures/left.jpg",
+         "textures/bottom.jpg",
+         "textures/top.jpg",
+         "textures/front.jpg",
+         "textures/back.jpg"
+        };
+
+        #endregion Skybox
 
         #region Cube
 
@@ -196,7 +252,6 @@ namespace SAEOpenGL.S1
 
         private static void Main()
         {
-
             game = new Game(userInterfaceHelper);
 
             Window.CreateWindow("OpenGL S1", Width, Height);
@@ -218,18 +273,26 @@ namespace SAEOpenGL.S1
             var cottageMaterial = ShaderProgram.Create("shaders\\cottageVert.vs", "shaders\\cottageFrag.fs");
             var gearMaterial = ShaderProgram.Create("shaders\\gearVert.vs", "shaders\\gearFrag.fs");
             var lightMaterial = ShaderProgram.Create("shaders/vertLight.vs", "shaders/fragLight.fs");
+            var skyboxMaterial = ShaderProgram.Create("shaders/skyboxVert.vs", "shaders/skyboxFrag.fs");
+            var skyboxMirrorMaterial = ShaderProgram.Create("shaders/skyboxMirrorVert.vs", "shaders/skyboxMirrorFrag.fs");
 
             //Load the textures
             List<OpenGL.Texture> cottageTextures = new List<OpenGL.Texture>();
 
+            //Cottage
             var cottageTexture = new OpenGL.Texture("textures/Cottage_Clean_Base_Color.png");
             var alphaTexture = new OpenGL.Texture("textures/Cottage_Clean_Opacity.png");
 
             cottageTextures.Add(cottageTexture);
             cottageTextures.Add(alphaTexture);
 
+            //Gear
             List<OpenGL.Texture> gearTextures = new List<OpenGL.Texture>();
             gearTextures.Add(new OpenGL.Texture("textures/Gear_1_BaseColor.png"));
+
+            //Skybox
+            List<OpenGL.Texture> skyBoxTextures = new List<OpenGL.Texture>();
+            skyBoxTextures.Add(new OpenGL.Texture(skyboxFilenames));
 
             //Setting the values of the sampler2Ds to their respective texture unit
             //Texture unit 0 = baseColorMap (diffuseColor)
@@ -248,57 +311,81 @@ namespace SAEOpenGL.S1
             OpenGL.Gl.ProgramUniform1i(gearMaterial.ProgramID, baseColor, 0);
 
             //Creating the vaos for the obj models
+
+            //Gear
             LoadObjFile("models/Gear1.obj", out List<Vertex> vertices, out List<ObjLoader.Loader.Data.VertexData.Texture> uvs, out List<Normal> normals, out List<uint> indices);
 
             var geo_gear = CreateVAO(vertices.ToArray(), uvs.ToArray(), normals.ToArray(), indices.ToArray(), gearMaterial);
 
+            //Cottage
             LoadObjFile("models/Cottage_FREE.obj", out List<Vertex> outputVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> outputTextures, out List<Normal> outputNormals, out List<uint> outputIndices);
 
             var geo_cottage = CreateVAO(outputVertices.ToArray(), outputTextures.ToArray(), outputNormals.ToArray(), outputIndices.ToArray(), cottageMaterial);
 
-            //Creating our light source
-            List<IGenericVBO> vbos_light = new List<IGenericVBO>();
-            vbos_light.Add(new GenericVBO<Vector3>(new VBO<Vector3>(vertices_cube), "in_position"));
+            //Reflective sphere
+            LoadObjFile("models/Sphere.obj", out List<Vertex> sphereVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> sphereUVs, out List<Normal> sphereNormals, out List<uint> sphereIndices);
 
-            vbos_light.Add(new GenericVBO<uint>(new VBO<uint>(indices_cube, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead)));
+            var geo_sphere = CreateVAO(sphereVertices.ToArray(),sphereNormals.ToArray(), sphereIndices.ToArray(), skyboxMirrorMaterial);
 
-            var vbo_light = vbos_light.ToArray();
+            //Light cube
+            var geo_light = CreateVAO(vertices_cube, indices_cube, lightMaterial);
 
-            var geo_light = new VAO(lightMaterial, vbo_light);
+            //Skybox
+            var geo_skybox = new VAO(skyboxMaterial, new VBO<Vector3>(skyboxVertices), new VBO<uint>(skyboxIndices,BufferTarget.ElementArrayBuffer,BufferUsageHint.StaticRead));
 
-            //Create game object
-            GameObject cameraObject = new GameObject("Camera", game);
-            MovementControllerManager movementControllerManager = new MovementControllerManager(cameraObject);
-            Camera cameraComponent = new Camera(cameraObject);
-            MovementController cameraController = new MovementController(cameraObject);
+            //Create skyBoxGameObject
+            var obj_skyBox = new GameObject("Skybox", game, new MeshRenderer (skyboxMaterial, geo_skybox, skyBoxTextures));
 
-            var lightObject = new GameObject("Light source", game, new MeshRenderer(lightMaterial, geo_light));
-            PointLight pointLight = new PointLight(lightObject);
-            MovementController lightController = new MovementController(lightObject, true);
-
-            movementControllerManager.MakeControllerActive(cameraController);
-
+            //Create cottage game object
             GameObject obj_cottage = new GameObject("Cottage", game, new MeshRenderer(cottageMaterial, geo_cottage, cottageTextures));
+
+            //Create gear game object
             GameObject obj_gear = new GameObject("Gear", game, new MeshRenderer(gearMaterial, geo_gear, gearTextures));
 
+            //Create skyboxMirrorObject
+            GameObject obj_skyBoxMirror = new GameObject("SkyboxMirror", game, new MeshRenderer(skyboxMirrorMaterial, geo_sphere, skyBoxTextures));
+
+            //Create light game object
+            var obj_pointLight = new GameObject("Light source", game, new MeshRenderer(lightMaterial, geo_light));
+            PointLight pointLight = new PointLight();
+            MovementController lightController = new MovementController(true);
+            obj_pointLight.AddComponent(lightController);
+            obj_pointLight.AddComponent(pointLight);
+
+            //Create camera game object
+            GameObject obj_camera = new GameObject("Camera", game);
+            MovementControllerManager movementControllerManager = new MovementControllerManager();
+            Camera cameraComponent = new Camera();
+            MovementController cameraController = new MovementController();
+            obj_camera.AddComponent(movementControllerManager);
+            obj_camera.AddComponent(cameraController);
+            obj_camera.AddComponent(cameraComponent);
+
+            //Make transformations
             obj_cottage.Transform.Position = new Vector3(0, 0, -10);
             obj_cottage.Transform.Scale = new Vector3(0.5f, 0.5f, 0.5f);
 
             obj_gear.Transform.Position = new Vector3(6, 0, -10);
             obj_gear.Transform.Scale = new Vector3(0.3f, 0.3f, 0.3f);
 
-            lightObject.Transform.Position = new Vector3(0, 0, 0);
-            lightObject.Transform.Scale = new Vector3(0.2f, 0.2f, 0.2f);
-            lightObject.Transform.Rotation = new Vector3(0.0f, 0.0f, 0.0f);
+            obj_pointLight.Transform.Position = new Vector3(0, 0, 0);
+            obj_pointLight.Transform.Scale = new Vector3(0.2f, 0.2f, 0.2f);
+            obj_pointLight.Transform.Rotation = new Vector3(0.0f, 0.0f, 0.0f);
 
+            obj_skyBoxMirror.Transform.Position = new Vector3(1, 1, 1);
+            obj_skyBoxMirror.Transform.Scale = new Vector3(1, 1, 1);
+
+            //Set main camera and add point light to the game
             game.MainCamera = cameraComponent;
             game.PointLights.Add(pointLight);
 
-            // Add to scene
+            // Add gameobjects to scene
             game.SceneGraph.Add(obj_cottage);
             game.SceneGraph.Add(obj_gear);
-            game.SceneGraph.Add(lightObject);
-            game.SceneGraph.Add(cameraObject);
+            game.SceneGraph.Add(obj_pointLight);
+            game.SceneGraph.Add(obj_skyBox);
+            game.SceneGraph.Add(obj_skyBoxMirror);
+            game.SceneGraph.Add(obj_camera);
 
             //Hook input callbacks
             InputHelper.InitInputs();
@@ -314,6 +401,8 @@ namespace SAEOpenGL.S1
             Window.OnMouseMoveCallbacks.Add(OpenGL.UI.UserInterface.OnMouseMove);
 
             // Game loop
+            game.Start();
+
             while (Window.Open)
             {
                 Window.HandleEvents();
@@ -337,7 +426,6 @@ namespace SAEOpenGL.S1
             Height = Window.Height;
 
             var windowPosition = Window.GetWindowPosition();
-            //CursorRestriction.RestrictCursorToRectangle((int)windowPosition.X, (int)windowPosition.Y, (int)windowPosition.X + Width, (int)windowPosition.Y + Height);
 
             OpenGL.UI.UserInterface.OnResize(Window.Width, Window.Height);
         }
@@ -495,6 +583,11 @@ namespace SAEOpenGL.S1
                         outputIndices.Add((uint)index);
                     }
                 }
+
+                else if (face.Count == 5)
+                {
+                    Console.WriteLine("The obj file: " + path +  " contains five sided faces. This algorithm currently only supports 3 and 4 sided faces.");
+                }
             }
             Console.WriteLine();
             Console.WriteLine("Successfully loaded obj-Model from: " + path);
@@ -502,7 +595,7 @@ namespace SAEOpenGL.S1
 
         #endregion ObjLoading
 
-        #region OpenGL-HelperMethods
+        #region OpenGL Helper Methods
 
         private static VAO CreateVAO(Vector3[] vertices, Vector2[] uvs, Vector3[] normals, uint[] indices, ShaderProgram material)
         {
@@ -510,6 +603,17 @@ namespace SAEOpenGL.S1
             vbos_model.Add(new GenericVBO<Vector3>(new VBO<Vector3>(vertices), "in_position"));
             vbos_model.Add(new GenericVBO<Vector3>(new VBO<Vector3>(normals), "in_normal"));
             vbos_model.Add(new GenericVBO<Vector2>(new VBO<Vector2>(uvs), "in_texcoords"));
+
+            vbos_model.Add(new GenericVBO<uint>(new VBO<uint>(indices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead)));
+
+            var vbo_model = vbos_model.ToArray();
+
+            return new VAO(material, vbo_model);
+        }
+        private static VAO CreateVAO(Vector3[] vertices, uint[] indices, ShaderProgram material)
+        {
+            List<IGenericVBO> vbos_model = new List<IGenericVBO>();
+            vbos_model.Add(new GenericVBO<Vector3>(new VBO<Vector3>(vertices), "in_position"));
 
             vbos_model.Add(new GenericVBO<uint>(new VBO<uint>(indices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead)));
 
@@ -531,10 +635,34 @@ namespace SAEOpenGL.S1
 
             return new VAO(material, vbo_model);
         }
+        private static VAO CreateVAO(Vertex[] vertices,  Normal[] normals, uint[] indices, ShaderProgram material)
+        {
+            List<IGenericVBO> vbos_model = new List<IGenericVBO>();
+            vbos_model.Add(new GenericVBO<Vertex>(new VBO<Vertex>(vertices), "in_position"));
+            vbos_model.Add(new GenericVBO<Normal>(new VBO<Normal>(normals), "in_normal"));
+
+            vbos_model.Add(new GenericVBO<uint>(new VBO<uint>(indices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead)));
+
+            var vbo_model = vbos_model.ToArray();
+
+            return new VAO(material, vbo_model);
+        }
+        private static VAO CreateVAO(Vertex[] vertices, uint[] indices, ShaderProgram material)
+        {
+            List<IGenericVBO> vbos_model = new List<IGenericVBO>();
+            vbos_model.Add(new GenericVBO<Vertex>(new VBO<Vertex>(vertices), "in_position"));
+
+            vbos_model.Add(new GenericVBO<uint>(new VBO<uint>(indices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead)));
+
+            var vbo_model = vbos_model.ToArray();
+
+            return new VAO(material, vbo_model);
+        }
 
         private static void SetupOpenGLSettings()
         {
             //Enable depth testing to ensure correct z-ordering of our fragments
+            Gl.DepthFunc(DepthFunction.Lequal);
             Gl.Enable(EnableCap.DepthTest);
             Gl.Enable(EnableCap.Blend);
             Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);

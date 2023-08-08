@@ -7,10 +7,13 @@ namespace OpenGL.Game.Components
     {
         public float FOV = 45;
 
-        public Camera(GameObject gameObject) : base(gameObject)
+        public Camera() 
         {
         }
 
+        public override void OnStart()
+        {
+        }
         public override void OnUpdate()
         {
         }

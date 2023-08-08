@@ -16,7 +16,7 @@ namespace OpenGL.Game.Components
         //Since this class has a  method that subscribes to an event in the constructor, we make sure we only subscribe to this event once.
         private bool alreadySubscribedToStaticMethods = false;
 
-        public MovementControllerManager(GameObject gameObject) : base(gameObject)
+        public MovementControllerManager()
         {
             Instance = this;
             InputHelper.ButtonSpacePressedEvent += SelectNextMovementController;
@@ -37,6 +37,10 @@ namespace OpenGL.Game.Components
             currentlySelectedMovementController.RotationEnabled = true;
 
             ChangeUITextToSelectedController();
+        }
+        public override void OnStart()
+        {
+
         }
 
         public override void OnUpdate()

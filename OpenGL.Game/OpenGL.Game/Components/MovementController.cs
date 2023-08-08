@@ -29,14 +29,16 @@ namespace OpenGL.Game.Components
         public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
         public float RotationSpeed { get => rotationSpeed; set => rotationSpeed = value; }
 
-        public MovementController(GameObject gameObject, bool useWorldSpaceAxis = false) : base(gameObject)
+        public MovementController(bool useWorldSpaceAxis = false)
         {
             UseWorldSpaceAxis = useWorldSpaceAxis;
+            SubscribeToEvents();
+        }
 
+        public override void OnStart()
+        {
             //All movement controllers are added to the movementControllerManagers list
             MovementControllerManager.Instance.AddMovementController(this);
-
-            SubscribeToEvents();
         }
 
         public override void OnUpdate()

@@ -1,4 +1,5 @@
-﻿using OpenGL.Mathematics;
+﻿using System;
+using OpenGL.Mathematics;
 
 namespace OpenGL.Game.Components
 {
@@ -10,19 +11,25 @@ namespace OpenGL.Game.Components
         protected Transform transform;
         public Transform Transform { get => transform; private set => transform = value; }
 
-        public Component(GameObject gameObject)
+        public Component()
         {
-            if (gameObject == null) return;
-            SetGameObject(gameObject);
         }
+
+        public abstract void OnStart();
 
         public abstract void OnUpdate();
 
-        public void SetGameObject(GameObject gameObject)
+        public void AttachToGameObject(GameObject gameObject)
         {
+            if(this.gameObject != null)
+            {
+                Console.WriteLine("Component of type: " + this.GetType().ToString() + " could not be attached to gameObject: " + gameObject.Name + " because it is currently attached to: " + GameObject.Name + ".");
+                Console.WriteLine("A component can only be added to one gameObject at a time");
+                return;
+            }
+
             GameObject = gameObject;
             transform = gameObject.Transform;
-            gameObject.AddComponent(this);
         }
     }
 }

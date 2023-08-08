@@ -9,7 +9,7 @@ namespace OpenGL.Game.Components
 
         public List<Texture> MeshTextures { get; private set; } = new List<Texture>();
 
-        public MeshRenderer(ShaderProgram material, VAO geometry, List<Texture> textures = null, GameObject gameObject = null) : base(gameObject)
+        public MeshRenderer(ShaderProgram material, VAO geometry, List<Texture> textures = null)
         {
             Material = material;
             Geometry = geometry;
@@ -29,6 +29,10 @@ namespace OpenGL.Game.Components
 
             Geometry.Program.Use();
             Geometry.Draw();
+        }
+
+        public override void OnStart()
+        {
         }
 
         public override void OnUpdate()

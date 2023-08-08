@@ -6,8 +6,13 @@
         public float diffuseIntensity = 1f;
         public float specularIntensity = 1f;
 
-        public PointLight(GameObject gameObject) : base(gameObject)
+        public PointLight()
         {
+        }
+
+        public override void OnStart()
+        {
+
         }
 
         public override void OnUpdate()
