@@ -17,6 +17,8 @@ public class UserInterfaceHelper
     #region Pause Menu
 
     private bool isPauseMenuEnabled = false;
+    public int ButtonWidth = 200;
+    public int ButtonHeight = 75;
     public Vector4 buttonNormalColor = new Vector4(0, 0.4666666666666667f, 0.7137254901960784f, 1.0f);
     public Vector4 buttonHoverColor = new Vector4(0.011764705882352941f, 0.01568627450980392f, 0.3686274509803922f, 1.0f);
     public List<Button> pauseMenuButtons = new List<Button>();
@@ -31,6 +33,8 @@ public class UserInterfaceHelper
 
         OpenGL.UI.UserInterface.InitUI(width, height);
         this.game = game;
+
+        //Setup HUD Text
 
         topLeftText = new Text(Shaders.FontShader, BMFont.LoadFont("fonts/segoe_ui32.fnt"), "SAE S1 - Demo", BMFont.Justification.Center);
         topLeftText.RelativeTo = Corner.TopLeft;
@@ -52,11 +56,10 @@ public class UserInterfaceHelper
         useBlinnText.RelativeTo = Corner.TopRight;
         useBlinnText.Position = new Point(10, 200);
 
-
         CreatePauseMenu();
         InputHelper.ButtonEscapePressedEvent += OnEscapeChanged;
 
-        // add the two text object to the UI
+        // add all text objects to the UI
         UserInterface.AddElement(topLeftText);
         UserInterface.AddElement(lightingOnText);
         UserInterface.AddElement(currentlySelectedTitle);
@@ -92,7 +95,7 @@ public class UserInterfaceHelper
                 multiplier--;
             }
 
-            var button = new Button(120, 50);
+            var button = new Button(ButtonWidth, ButtonHeight);
             button.RelativeTo = Corner.Center;
             button.Position = new Point(0, multiplier * value);
             button.BackgroundColor = buttonNormalColor;
@@ -111,7 +114,6 @@ public class UserInterfaceHelper
                 case 1:
                     button.OnMouseClick += (s, e) => game.ToggleDirectionalLighting();
                     button.Text = "Toggle directional lighting";
-                    button.Font = BMFont.LoadFont("fonts/segoe_ui12.fnt");
                     break;
 
                 case 2:

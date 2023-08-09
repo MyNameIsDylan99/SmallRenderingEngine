@@ -15,22 +15,23 @@ namespace OpenGL.Game
 
         #endregion Window Parameters
 
-        private string[] possibleProgramParams = new string[]
-        {
-            "model",
-            "projection",
-            "view",
-            "color",
-            "enableLighting",
-            "color",
-            "tangentToWorld",
-            "lightData",
-            "directionalLight",
-            "directionalColor",
-            "useBlinn",
-            "lightColor"
+        //private string[] possibleProgramParams = new string[]
+        //{
+        //    "model",
+        //    "projection",
+        //    "view",
+        //    "color",
+        //    "enableLighting",
+        //    "color",
+        //    "tangentToWorld",
+        //    "lightData",
+        //    "directionalLight",
+        //    "directionalColor",
+        //    "useBlinn",
+        //    "lightColor"
 
-        };
+        //};
+
         public UserInterfaceHelper UserInterfaceHelper;
 
         private Vector3 directionalLight = new Vector3(0, -1, 0);
@@ -111,7 +112,8 @@ namespace OpenGL.Game
         private void SetUniforms(GameObject obj)
         {
             //Tranformation matrices
-            //Since we have row based vectors we need the SRT matrix to apply all transformations in local space
+
+            //For some reason I have to use SRT matrix to apply all transformation in local space.
             Matrix4 model = obj.Transform.GetSRT();
             Matrix4 view = MainCamera.GetViewMatrix();
             Matrix4 projection = MainCamera.GetProjectionMatrix();
@@ -134,39 +136,21 @@ namespace OpenGL.Game
             ShaderProgram material = obj.Renderer.Material;
             material.Use();
 
-
-            //List<ProgramParam> shaderParams = new List<ProgramParam>();
-
-            //foreach(var possibleProgramParam in possibleProgramParams)
-            //{
-            //    material[possibleProgramParam]?.SetValue(Color);
-            //}
-
+            //TODO: Use matrices to pass data to shader
 
             material["model"]?.SetValue(model);
             material["projection"]?.SetValue(projection);
             material["view"]?.SetValue(view);
-
-
-            //Since the light object has a different shader that doesn't have a tangent to world uniform, we won't pass it to the light source
-            //if (!obj.HasComponent<PointLight>())
-            //{
-                //TODO: Use matrices to pass data to shader
-
-                material["color"]?.SetValue(Color);
-                material["enableLighting"]?.SetValue(EnableLighting);
-                material["tangentToWorld"]?.SetValue(tangentToWorld);
-                material["lightData"]?.SetValue(lightData);
-                material["directionalLight"]?.SetValue(directionalLight);
-                material["directionalColor"]?.SetValue(directionalColor);
-                material["useDirectional"]?.SetValue(useDirectionalLight);
-                material["useBlinn"]?.SetValue(useBlinn);
-                material["cameraPos"]?.SetValue(MainCamera.Transform.Position);
-           // }
-           // else
-           // {
-                material["lightColor"]?.SetValue(obj.GetComponent<PointLight>().lightColor);
-            //}
+            material["color"]?.SetValue(Color);
+            material["enableLighting"]?.SetValue(EnableLighting);
+            material["tangentToWorld"]?.SetValue(tangentToWorld);
+            material["lightData"]?.SetValue(lightData);
+            material["directionalLight"]?.SetValue(directionalLight);
+            material["directionalColor"]?.SetValue(directionalColor);
+            material["useDirectional"]?.SetValue(useDirectionalLight);
+            material["useBlinn"]?.SetValue(useBlinn);
+            material["cameraPos"]?.SetValue(MainCamera.Transform.Position);
+            material["lightColor"]?.SetValue(obj.GetComponent<PointLight>().lightColor);
         }
 
         public void ToggleLightingCallback(bool isLPressed)
@@ -196,7 +180,7 @@ namespace OpenGL.Game
         {
             useBlinn = !useBlinn;
 
-            if(useBlinn)
+            if (useBlinn)
                 UserInterfaceHelper.useBlinnText.String = "Using Blinn";
             else
                 UserInterfaceHelper.useBlinnText.String = "Using Phong";

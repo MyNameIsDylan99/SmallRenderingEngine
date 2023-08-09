@@ -14,10 +14,16 @@ uniform vec3 directionalLight;
 
 uniform sampler2D textureSampler;
 uniform sampler2D alphaSampler;
+uniform sampler2D normalSampler;
+uniform sampler2D roughnessSampler;
+uniform sampler2D metallicSampler;
 
-in vec3 position;
-in vec3 normal;
-in vec2 uv;
+in VS_OUT
+{
+   vec3 position;
+   vec2 uv;
+   mat3 TBN;
+} fs_in;
 
 out vec4 fragColor;
 
@@ -58,18 +64,24 @@ void main()
    vec3 viewPosition = lightData[3].xyz;
 
    float ambientIntensity = lightData[0].w;
-   float diffuseIntensity = lightData[1].w;
-   float specularIntensity = lightData[2].w;
+   //float diffuseIntensity = lightData[1].w;
+   //float specularIntensity = lightData[2].w;
    float hardness = lightData[3].w;
 
-   vec3 baseColor = texture2D(textureSampler, uv).rgb * color;
-   float alpha = 1.0 - texture2D(alphaSampler,uv).r;
+   //Values from texture maps
+   vec3 baseColor = texture2D(textureSampler, fs_in.uv).rgb * color;
+   float alpha = 1.0 - texture2D(alphaSampler,fs_in.uv).r;
+   vec3 normal = texture2D(normalSampler,fs_in.uv).rgb;
+   normal = normal * 2.0 - 1.0;
+   normal = normalize(fs_in.TBN * normal);
+   float diffuseIntensity = texture2D(roughnessSampler, fs_in.uv).r;
+   float specularIntensity = texture2D(metallicSampler, fs_in.uv).r;
 
    //Lighting
-   vec3 lightDirection = normalize(lightPosition - position);
-   vec3 viewDirection = normalize(viewPosition - position);
+   vec3 lightDirection = normalize(lightPosition - fs_in.position);
+   vec3 viewDirection = normalize(viewPosition - fs_in.position);
 
-   float distanceToLight = length(lightPosition-position);
+   float distanceToLight = length(lightPosition-fs_in.position);
    float k = 1/pow(distanceToLight,2);
 
    //directional
@@ -83,7 +95,7 @@ void main()
    if(!useBlinn)
    reflectionDirection = reflect(-lightDirection, normal);
    else
-   reflectionDirection = normalize(viewDirection+lightDirection);
+   reflectionDirection = normalize(viewDirection + lightDirection);
    
 
    vec3 ambient = ambientReflection(ambientIntensity, 1.0f, ambientLightColor);

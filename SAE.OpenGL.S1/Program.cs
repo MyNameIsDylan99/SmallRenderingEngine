@@ -18,8 +18,8 @@ namespace SAEOpenGL.S1
 
         #region Skybox
 
-    private static Vector3[] skyboxVertices = new Vector3[]
-        {
+        private static Vector3[] skyboxVertices = new Vector3[]
+            {
     // Front face
     new Vector3(-1.0f, -1.0f, -1.0f),
     new Vector3(-1.0f,  1.0f, -1.0f),
@@ -31,7 +31,7 @@ namespace SAEOpenGL.S1
     new Vector3(-1.0f,  1.0f,  1.0f),
     new Vector3( 1.0f,  1.0f,  1.0f),
     new Vector3( 1.0f, -1.0f,  1.0f)
-        };
+            };
 
         private static uint[] skyboxIndices = new uint[]
         {
@@ -58,9 +58,7 @@ namespace SAEOpenGL.S1
     // Bottom face
     2, 6, 7,
     7, 3, 2
-
         };
-
 
         private static string[] skyboxFilenames = new string[]
         {
@@ -282,17 +280,15 @@ namespace SAEOpenGL.S1
             //Cottage
             var cottageTexture = new OpenGL.Texture("textures/Cottage_Clean_Base_Color.png");
             var alphaTexture = new OpenGL.Texture("textures/Cottage_Clean_Opacity.png");
+            var normalTexture = new OpenGL.Texture("textures/Cottage_Clean_Normal.png");
+            var roughnessTexture = new OpenGL.Texture("textures/Cottage_Clean_Roughness.png");
+            var metallicTexture = new OpenGL.Texture("textures/Cottage_Clean_MetallicSmoothness.png");
 
             cottageTextures.Add(cottageTexture);
             cottageTextures.Add(alphaTexture);
-
-            //Gear
-            List<OpenGL.Texture> gearTextures = new List<OpenGL.Texture>();
-            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_BaseColor.png"));
-
-            //Skybox
-            List<OpenGL.Texture> skyBoxTextures = new List<OpenGL.Texture>();
-            skyBoxTextures.Add(new OpenGL.Texture(skyboxFilenames));
+            cottageTextures.Add(normalTexture);
+            cottageTextures.Add(roughnessTexture);
+            cottageTextures.Add(metallicTexture);
 
             //Setting the values of the sampler2Ds to their respective texture unit
             //Texture unit 0 = baseColorMap (diffuseColor)
@@ -300,15 +296,29 @@ namespace SAEOpenGL.S1
 
             var baseColor = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "textureSampler");
             var alphaMap = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "alphaSampler");
+            var normalMap = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "normalSampler");
+            var roughnessMap = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "roughnessSampler");
+            var metallicMap = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "metallicSampler");
 
             OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, baseColor, 0);
             OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, alphaMap, 1);
+            OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, normalMap, 2);
+            OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, roughnessMap, 3);
+            OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, metallicMap, 4);
+
+            //Gear
+            List<OpenGL.Texture> gearTextures = new List<OpenGL.Texture>();
+            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_BaseColor.png"));
 
             //Do the same for gearMaterial
             //Texture unit 0 = baseColorMap (diffuseColor)
             baseColor = OpenGL.Gl.GetUniformLocation(gearMaterial.ProgramID, "textureSampler");
 
             OpenGL.Gl.ProgramUniform1i(gearMaterial.ProgramID, baseColor, 0);
+
+            //Skybox
+            List<OpenGL.Texture> skyBoxTextures = new List<OpenGL.Texture>();
+            skyBoxTextures.Add(new OpenGL.Texture(skyboxFilenames));
 
             //Creating the vaos for the obj models
 
@@ -318,23 +328,23 @@ namespace SAEOpenGL.S1
             var geo_gear = CreateVAO(vertices.ToArray(), uvs.ToArray(), normals.ToArray(), indices.ToArray(), gearMaterial);
 
             //Cottage
-            LoadObjFile("models/Cottage_FREE.obj", out List<Vertex> outputVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> outputTextures, out List<Normal> outputNormals, out List<uint> outputIndices);
+            LoadObjFile("models/Cottage_FREE.obj", out List<Vertex> outputVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> outputTextures, out List<Normal> outputNormals, out List<Vector3> outputTangents, out List<Vector3> outputBitangents, out List<uint> outputIndices);
 
-            var geo_cottage = CreateVAO(outputVertices.ToArray(), outputTextures.ToArray(), outputNormals.ToArray(), outputIndices.ToArray(), cottageMaterial);
+            var geo_cottage = CreateVAO(outputVertices.ToArray(), outputTextures.ToArray(),outputNormals.ToArray(), outputTangents.ToArray(),outputBitangents.ToArray(),  outputIndices.ToArray(), cottageMaterial);
 
             //Reflective sphere
             LoadObjFile("models/Sphere.obj", out List<Vertex> sphereVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> sphereUVs, out List<Normal> sphereNormals, out List<uint> sphereIndices);
 
-            var geo_sphere = CreateVAO(sphereVertices.ToArray(),sphereNormals.ToArray(), sphereIndices.ToArray(), skyboxMirrorMaterial);
+            var geo_sphere = CreateVAO(sphereVertices.ToArray(), sphereNormals.ToArray(), sphereIndices.ToArray(), skyboxMirrorMaterial);
 
             //Light cube
             var geo_light = CreateVAO(vertices_cube, indices_cube, lightMaterial);
 
             //Skybox
-            var geo_skybox = new VAO(skyboxMaterial, new VBO<Vector3>(skyboxVertices), new VBO<uint>(skyboxIndices,BufferTarget.ElementArrayBuffer,BufferUsageHint.StaticRead));
+            var geo_skybox = new VAO(skyboxMaterial, new VBO<Vector3>(skyboxVertices), new VBO<uint>(skyboxIndices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead));
 
             //Create skyBoxGameObject
-            var obj_skyBox = new GameObject("Skybox", game, new MeshRenderer (skyboxMaterial, geo_skybox, skyBoxTextures));
+            var obj_skyBox = new GameObject("Skybox", game, new MeshRenderer(skyboxMaterial, geo_skybox, skyBoxTextures));
 
             //Create cottage game object
             GameObject obj_cottage = new GameObject("Cottage", game, new MeshRenderer(cottageMaterial, geo_cottage, cottageTextures));
@@ -474,6 +484,171 @@ namespace SAEOpenGL.S1
 
         #region ObjLoading
 
+        private static void LoadObjFile(string path, out List<Vertex> outputVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> outputTextures, out List<Normal> outputNormals,  out List<Vector3> outputTangents, out List<Vector3> outputBitangents,out List<uint> outputIndices)
+        {
+            //load obj file
+            var objLoaderFactory = new ObjLoaderFactory();
+            var objLoader = objLoaderFactory.Create();
+
+            var fileStream = new FileStream(path, FileMode.Open);
+            var result = objLoader.Load(fileStream);
+            var groups = result.Groups;
+            var faces = groups[0].Faces;
+
+            //Cache the input arrays of the positions, uvs and normals
+            var inputVertices = result.Vertices;
+            var inputTextureCoordinates = result.Textures;
+            var inputNormals = result.Normals;
+
+            //Create the output lists
+            outputVertices = new List<Vertex>(); //output positions
+            outputIndices = new List<uint>(); //output indices
+            outputTextures = new List<ObjLoader.Loader.Data.VertexData.Texture>(); //output Texture UVS
+            outputNormals = new List<Normal>(); //output normals
+            outputTangents = new List<Vector3>();
+            outputBitangents = new List<Vector3>();
+
+            // Create a dictionary to store unique vertices based on their attributes
+            Dictionary<Tuple<int, int, int>, int> vertexDictionary = new Dictionary<Tuple<int, int, int>, int>();
+
+            //index mapping if a face consists of 4 vertices we need to map them in a way that creates 2 triangles
+            Dictionary<int, int> indexMapping = new Dictionary<int, int>();
+            indexMapping.Add(0, 0);
+            indexMapping.Add(1, 1);
+            indexMapping.Add(2, 2);
+            indexMapping.Add(3, 0);
+            indexMapping.Add(4, 2);
+            indexMapping.Add(5, 3);
+
+            //we have to bring the data from the obj file into a format that opengl can work with
+            //that means we need a seperate array for positions, uvs, normals, indices etc.
+            Console.WriteLine("Current obj loading progress in %: ");
+
+            for (int i = 0; i < faces.Count; i++)
+            {
+                var progressInPercent = Math.Round(((float)i / (float)faces.Count) * 100);
+                Console.SetCursorPosition(0, Console.CursorTop);
+                Console.Write(progressInPercent);
+                var face = faces[i];
+
+                if (face.Count == 3)
+                {
+                    for (int j = 0; j < face.Count; j++)
+                    {
+                        var vertexIndex = face[j].VertexIndex - 1; //subtract 1 because obj indeces are 1 based
+                        var textureIndex = face[j].TextureIndex - 1;
+                        var normalIndex = face[j].NormalIndex - 1;
+
+                        var vertexAttributes = Tuple.Create(vertexIndex, textureIndex, normalIndex);
+
+                        if (!vertexDictionary.TryGetValue(vertexAttributes, out int index))
+                        {
+                            // Vertex does not exist in the dictionary, add it to the output lists
+
+                            var vertex = inputVertices[vertexIndex];
+                            var textureUV = inputTextureCoordinates[textureIndex];
+                            var normal = inputNormals[normalIndex];
+                            CalculateTangentBitangent(vertexAttributes, inputVertices, inputTextureCoordinates, inputNormals, outputTangents, outputBitangents);
+
+                            outputVertices.Add(vertex);
+                            outputTextures.Add(textureUV);
+                            outputNormals.Add(normal);
+
+                            // Add the new vertex to the dictionary with its index
+                            index = outputVertices.Count - 1;
+                            vertexDictionary.Add(vertexAttributes, index);
+                        }
+
+                        // Use the index of the vertex (either existing or newly added) for the triangle
+                        outputIndices.Add((uint)index);
+                    }
+                }
+                else if (face.Count == 4)
+                {
+                    for (int j = 0; j < 6; j++)
+                    {
+                        var faceVertexIndex = indexMapping[j];
+
+                        var vertexIndex = face[faceVertexIndex].VertexIndex - 1; //subtract 1 because obj indeces are 1 based
+                        var textureIndex = face[faceVertexIndex].TextureIndex - 1;
+                        var normalIndex = face[faceVertexIndex].NormalIndex - 1;
+
+                        var vertexAttributes = Tuple.Create(vertexIndex, textureIndex, normalIndex);
+
+                        if (!vertexDictionary.TryGetValue(vertexAttributes, out int index))
+                        {
+                            // Vertex does not exist in the dictionary, add it to the output lists
+
+                            var vertex = inputVertices[vertexIndex];
+                            var textureUV = inputTextureCoordinates[textureIndex];
+                            var normal = inputNormals[normalIndex];
+
+                            outputVertices.Add(vertex);
+                            outputTextures.Add(textureUV);
+                            outputNormals.Add(normal);
+                            CalculateTangentBitangent(vertexAttributes, inputVertices, inputTextureCoordinates, inputNormals, outputTangents, outputBitangents);
+
+                            // Add the new vertex to the dictionary with its index
+                            index = outputVertices.Count - 1;
+                            vertexDictionary.Add(vertexAttributes, index);
+                        }
+
+                        // Use the index of the vertex (either existing or newly added) for the triangle
+                        outputIndices.Add((uint)index);
+                    }
+                }
+                else if (face.Count == 5)
+                {
+                    Console.WriteLine("The obj file: " + path + " contains five sided faces. This algorithm currently only supports 3 and 4 sided faces.");
+                    return;
+                }
+            }
+            Console.WriteLine();
+            Console.WriteLine("Successfully loaded obj-Model from: " + path);
+        }
+
+        private static void CalculateTangentBitangent(Tuple<int, int, int> vertexAttributes, IList<Vertex> inputVertices, IList<ObjLoader.Loader.Data.VertexData.Texture> inputTextureCoordinates, IList<Normal> inputNormals, IList<Vector3> outputTangents, IList<Vector3> outputBitangents)
+        {
+            var vertexIndex = vertexAttributes.Item1;
+            var textureIndex = vertexAttributes.Item2;
+            var normalIndex = vertexAttributes.Item3;
+
+            // Retrieve the necessary vertex data
+            var vertex = inputVertices[vertexIndex];
+            var textureUV = inputTextureCoordinates[textureIndex];
+            var normal = inputNormals[normalIndex];
+
+            // Calculate the difference in texture coordinates between the current vertex and the adjacent vertices
+            var deltaPos1 = inputVertices[inputVertices.Count - 1] - vertex;
+            var deltaPos2 = inputVertices[inputVertices.Count - 2] - vertex;
+
+            // Calculate the difference in texture coordinates for the two edges of the triangle
+            var deltaUV1 = inputTextureCoordinates[inputTextureCoordinates.Count - 1] - textureUV;
+            var deltaUV2 = inputTextureCoordinates[inputTextureCoordinates.Count - 2] - textureUV;
+
+            // Calculate the tangent and bitangent vectors using the formula
+            var tangent = new Vector3();
+            var bitangent = new Vector3();
+
+            var r = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV1.Y * deltaUV2.X);
+
+            tangent.X = r * (deltaUV2.Y * deltaPos1.X - deltaUV1.Y * deltaPos2.X);
+            tangent.Y = r * (deltaUV2.Y * deltaPos1.Y - deltaUV1.Y * deltaPos2.Y);
+            tangent.Z = r * (deltaUV2.Y * deltaPos1.Z - deltaUV1.Y * deltaPos2.Z);
+
+            bitangent.X = r * (-deltaUV2.X * deltaPos1.X + deltaUV1.X * deltaPos2.X);
+            bitangent.Y = r * (-deltaUV2.X * deltaPos1.Y + deltaUV1.X * deltaPos2.Y);
+            bitangent.Z = r * (-deltaUV2.X * deltaPos1.Z + deltaUV1.X * deltaPos2.Z);
+
+            // Normalize the tangent and bitangent vectors
+            tangent.Normalize();
+            bitangent.Normalize();
+
+            // Add the calculated tangent and bitangent to the output lists
+            outputTangents.Add(tangent);
+            outputBitangents.Add(bitangent);
+        }
+
         private static void LoadObjFile(string path, out List<Vertex> outputVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> outputTextures, out List<Normal> outputNormals, out List<uint> outputIndices)
         {
             //load obj file
@@ -583,10 +758,10 @@ namespace SAEOpenGL.S1
                         outputIndices.Add((uint)index);
                     }
                 }
-
                 else if (face.Count == 5)
                 {
-                    Console.WriteLine("The obj file: " + path +  " contains five sided faces. This algorithm currently only supports 3 and 4 sided faces.");
+                    Console.WriteLine("The obj file: " + path + " contains five sided faces. This algorithm currently only supports 3 and 4 sided faces.");
+                    return;
                 }
             }
             Console.WriteLine();
@@ -610,6 +785,20 @@ namespace SAEOpenGL.S1
 
             return new VAO(material, vbo_model);
         }
+
+        private static VAO CreateVAO(Vector3[] vertices, Vector2[] uvs, uint[] indices, ShaderProgram material)
+        {
+            List<IGenericVBO> vbos_model = new List<IGenericVBO>();
+            vbos_model.Add(new GenericVBO<Vector3>(new VBO<Vector3>(vertices), "in_position"));
+            vbos_model.Add(new GenericVBO<Vector2>(new VBO<Vector2>(uvs), "in_texcoords"));
+
+            vbos_model.Add(new GenericVBO<uint>(new VBO<uint>(indices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead)));
+
+            var vbo_model = vbos_model.ToArray();
+
+            return new VAO(material, vbo_model);
+        }
+
         private static VAO CreateVAO(Vector3[] vertices, uint[] indices, ShaderProgram material)
         {
             List<IGenericVBO> vbos_model = new List<IGenericVBO>();
@@ -635,7 +824,37 @@ namespace SAEOpenGL.S1
 
             return new VAO(material, vbo_model);
         }
-        private static VAO CreateVAO(Vertex[] vertices,  Normal[] normals, uint[] indices, ShaderProgram material)
+        private static VAO CreateVAO(Vertex[] vertices, ObjLoader.Loader.Data.VertexData.Texture[] uvs, Normal[] normals, Vector3[]tangents, Vector3[]bitangents, uint[] indices, ShaderProgram material)
+        {
+            List<IGenericVBO> vbos_model = new List<IGenericVBO>();
+            vbos_model.Add(new GenericVBO<Vertex>(new VBO<Vertex>(vertices), "in_position"));
+            vbos_model.Add(new GenericVBO<Normal>(new VBO<Normal>(normals), "in_normal"));
+            vbos_model.Add(new GenericVBO<ObjLoader.Loader.Data.VertexData.Texture>(new VBO<ObjLoader.Loader.Data.VertexData.Texture>(uvs), "in_texcoords"));
+            vbos_model.Add(new GenericVBO<Vector3>(new VBO<Vector3>(tangents), "in_tangent"));
+            vbos_model.Add(new GenericVBO<Vector3>(new VBO<Vector3>(tangents), "in_bitangent"));
+
+            vbos_model.Add(new GenericVBO<uint>(new VBO<uint>(indices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead)));
+
+            var vbo_model = vbos_model.ToArray();
+
+            return new VAO(material, vbo_model);
+        }
+
+        private static VAO CreateVAO(Vertex[] vertices, ObjLoader.Loader.Data.VertexData.Texture[] uvs, uint[] indices, ShaderProgram material)
+        {
+            List<IGenericVBO> vbos_model = new List<IGenericVBO>();
+            vbos_model.Add(new GenericVBO<Vertex>(new VBO<Vertex>(vertices), "in_position"));
+            vbos_model.Add(new GenericVBO<ObjLoader.Loader.Data.VertexData.Texture>(new VBO<ObjLoader.Loader.Data.VertexData.Texture>(uvs), "in_texcoords"));
+
+            vbos_model.Add(new GenericVBO<uint>(new VBO<uint>(indices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead)));
+
+            var vbo_model = vbos_model.ToArray();
+
+            return new VAO(material, vbo_model);
+        }
+
+
+        private static VAO CreateVAO(Vertex[] vertices, Normal[] normals, uint[] indices, ShaderProgram material)
         {
             List<IGenericVBO> vbos_model = new List<IGenericVBO>();
             vbos_model.Add(new GenericVBO<Vertex>(new VBO<Vertex>(vertices), "in_position"));
@@ -647,6 +866,7 @@ namespace SAEOpenGL.S1
 
             return new VAO(material, vbo_model);
         }
+
         private static VAO CreateVAO(Vertex[] vertices, uint[] indices, ShaderProgram material)
         {
             List<IGenericVBO> vbos_model = new List<IGenericVBO>();
@@ -677,6 +897,6 @@ namespace SAEOpenGL.S1
             TextureParameter.Nearest);
         }
 
-        #endregion OpenGL-HelperMethods
+        #endregion OpenGL Helper Methods
     }
 }
