@@ -1,4 +1,5 @@
-﻿namespace OpenGL.UI
+﻿using OpenGL;
+namespace OpenGL.UI
 {
     public class Console : UIContainer
     {

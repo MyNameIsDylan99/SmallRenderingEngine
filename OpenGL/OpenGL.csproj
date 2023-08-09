@@ -29,15 +29,5 @@
     <ProjectReference Include="..\ObjLoader\source\CjClutter.ObjLoader.Loader\CjClutter.ObjLoader.Loader.csproj" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_4</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.4\OpenGL.xml</DocumentationFile>
-    <DefineConstants>RELEASE;USE_NUMERICS</DefineConstants>
-    <NoWarn>1701;1702;1591</NoWarn>
-    <WarningLevel>1</WarningLevel>
-  </PropertyGroup>
 
 </Project>

@@ -1,16 +1,11 @@
 ﻿using System;
-
-#if USE_NUMERICS
 using System.Numerics;
-#else
 
 using System.Runtime.InteropServices;
 
-#endif
 
 namespace OpenGL
 {
-#if !USE_NUMERICS
 
     [StructLayout(LayoutKind.Sequential)]
     public struct Vector2 : IEquatable<Vector2>
@@ -348,7 +343,6 @@ namespace OpenGL
         #endregion Methods
     }
 
-#endif
 
     /// <summary>
     /// Extension methods for the Vector4 structure.

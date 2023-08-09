@@ -1,15 +1,10 @@
-﻿#if USE_NUMERICS
-using System.Numerics;
-#else
-
+﻿using System.Numerics;
 using System;
 using System.Runtime.InteropServices;
 
-#endif
 
 namespace OpenGL
 {
-#if !USE_NUMERICS
 
     [StructLayout(LayoutKind.Sequential)]
     public struct Quaternion : IEquatable<Quaternion>
@@ -234,7 +229,7 @@ namespace OpenGL
         /// <summary>
         /// Normalizes this Quaternion.  Normalize = q / q.Length()
         /// </summary>
-        private static Quaternion Normalize(Quaternion q)
+        public static Quaternion Normalize(Quaternion q)
         {
             return q / q.Length;
         }
@@ -468,7 +463,6 @@ namespace OpenGL
         #endregion Methods
     }
 
-#else
     /// <summary>
     /// Extension methods for the Quaternion structure.
     /// </summary>
@@ -497,5 +491,4 @@ namespace OpenGL
             }
         }
     }
-#endif
 }

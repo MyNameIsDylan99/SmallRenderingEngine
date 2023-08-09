@@ -1,4 +1,5 @@
-﻿namespace OpenGL.UI
+﻿using OpenGL;
+namespace OpenGL.UI
 {
     /// <summary>
     /// The BMFont class can be used to load both the texture and data files associated with

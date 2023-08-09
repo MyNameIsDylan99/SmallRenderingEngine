@@ -58,6 +58,7 @@ vec3 specularReflection(float intensity, float factor, vec3 lightColor, float ha
 void main()
 {
 
+   //get general light data
    vec3 lightPosition = lightData[0].xyz;
    vec3 ambientLightColor = lightData[1].xyz;
    vec3 pointLightColor = lightData[2].xyz;

@@ -1,4 +1,5 @@
-﻿using OpenGL.Platform;
+﻿using OpenGL;
+using OpenGL.Platform;
 
 namespace OpenGL.UI
 {
