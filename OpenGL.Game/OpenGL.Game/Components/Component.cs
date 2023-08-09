@@ -14,10 +14,14 @@ namespace OpenGL.Game.Components
         public Component()
         {
         }
+        public abstract void OnAwake();
 
         public abstract void OnStart();
 
         public abstract void OnUpdate();
+
+        public abstract void OnDisable();
+
 
         public void AttachToGameObject(GameObject gameObject)
         {

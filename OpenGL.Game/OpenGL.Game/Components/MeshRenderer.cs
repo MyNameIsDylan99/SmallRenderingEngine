@@ -31,11 +31,17 @@ namespace OpenGL.Game.Components
             Geometry.Draw();
         }
 
+        public override void OnAwake()
+        {
+        }
         public override void OnStart()
         {
         }
 
         public override void OnUpdate()
+        {
+        }
+        public override void OnDisable()
         {
         }
     }

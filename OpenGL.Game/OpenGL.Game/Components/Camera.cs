@@ -10,11 +10,17 @@ namespace OpenGL.Game.Components
         public Camera() 
         {
         }
+        public override void OnAwake()
+        {
+        }
 
         public override void OnStart()
         {
         }
         public override void OnUpdate()
+        {
+        }
+        public override void OnDisable()
         {
         }
 
@@ -46,5 +52,6 @@ namespace OpenGL.Game.Components
 
             return projection;
         }
+
     }
 }

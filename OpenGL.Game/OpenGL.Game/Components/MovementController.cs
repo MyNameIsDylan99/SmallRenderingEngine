@@ -32,15 +32,22 @@ namespace OpenGL.Game.Components
         public MovementController(bool useWorldSpaceAxis = false)
         {
             UseWorldSpaceAxis = useWorldSpaceAxis;
-            SubscribeToEvents();
         }
 
+        public override void OnAwake()
+        {
+        }
         public override void OnStart()
         {
             //All movement controllers are added to the movementControllerManagers list
             MovementControllerManager.Instance.AddMovementController(this);
+            SubscribeToEvents();
         }
 
+        public override void OnDisable()
+        {
+            UnSubscribeToEvents();
+        }
         public override void OnUpdate()
         {
             if (!MovementEnabled) return;
@@ -67,15 +74,54 @@ namespace OpenGL.Game.Components
 
         public void SubscribeToEvents()
         {
-            InputHelper.ButtonWPressedEvent += (x) => moveForward = x;
-            InputHelper.ButtonSPressedEvent += (x) => moveBackwards = x;
-            InputHelper.ButtonAPressedEvent += (x) => moveLeft = x;
-            InputHelper.ButtonDPressedEvent += (x) => moveRight = x;
-            InputHelper.ButtonEPressedEvent += (x) => moveUp = x;
-            InputHelper.ButtonQPressedEvent += (x) => moveDown = x;
+            InputHelper.ButtonWPressedEvent += OnWPressed;
+            InputHelper.ButtonSPressedEvent += OnSPressed;
+            InputHelper.ButtonAPressedEvent += OnAPressed;
+            InputHelper.ButtonDPressedEvent += OnDPressed;
+            InputHelper.ButtonEPressedEvent += OnEPressed;
+            InputHelper.ButtonQPressedEvent += OnQPressed;
 
             InputHelper.MouseMoveEvent += ProcessRotation;
         }
+        public void UnSubscribeToEvents()
+        {
+            InputHelper.ButtonWPressedEvent -= OnWPressed;
+            InputHelper.ButtonSPressedEvent -= OnSPressed;
+            InputHelper.ButtonAPressedEvent -= OnAPressed;
+            InputHelper.ButtonDPressedEvent -= OnDPressed;
+            InputHelper.ButtonEPressedEvent -= OnEPressed;
+            InputHelper.ButtonQPressedEvent -= OnQPressed;
+
+            InputHelper.MouseMoveEvent -= ProcessRotation;
+        }
+
+        #region InputCallbacks
+        private void OnWPressed(bool isPressed)
+        {
+            moveForward = isPressed;
+        }
+
+        private void OnSPressed(bool isPressed)
+        {
+            moveBackwards = isPressed;
+        }
+        private void OnAPressed(bool isPressed)
+        {
+            moveLeft = isPressed;
+        }
+        private void OnDPressed(bool isPressed)
+        {
+            moveRight = isPressed;
+        }
+        private void OnQPressed(bool isPressed)
+        {
+            moveDown = isPressed;
+        }
+        private void OnEPressed(bool isPressed)
+        {
+            moveUp = isPressed;
+        }
+        #endregion
 
         #region Movement
 

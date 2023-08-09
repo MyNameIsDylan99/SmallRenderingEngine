@@ -31,11 +31,26 @@ namespace OpenGL.Game
         {
         }
 
+        public void Awake()
+        {
+            foreach (var component in components)
+            {
+                component.OnAwake();
+            }
+        }
         public void Start()
         {
             foreach (var component in components)
             {
                 component.OnStart();
+            }
+        }
+
+        public void Disable()
+        {
+            foreach (var component in components)
+            {
+                component.OnDisable();
             }
         }
 

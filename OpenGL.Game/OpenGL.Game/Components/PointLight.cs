@@ -10,6 +10,9 @@
         {
         }
 
+        public override void OnAwake()
+        {
+        }
         public override void OnStart()
         {
 
@@ -19,6 +22,9 @@
         {
         }
 
+        public override void OnDisable()
+        {
+        }
         public Matrix3 GetLightData()
         {
             Matrix3 lightMatrix = new Matrix3();

@@ -36,7 +36,7 @@ public class UserInterfaceHelper
 
         //Setup HUD Text
 
-        topLeftText = new Text(Shaders.FontShader, BMFont.LoadFont("fonts/segoe_ui32.fnt"), "SAE S1 - Demo", BMFont.Justification.Center);
+        topLeftText = new Text(Shaders.FontShader, BMFont.LoadFont("fonts/segoe_ui32.fnt"), "SAE S1", BMFont.Justification.Center);
         topLeftText.RelativeTo = Corner.TopLeft;
         topLeftText.Position = new Point(100, 50);
 
@@ -69,7 +69,7 @@ public class UserInterfaceHelper
         IsUIInitalized = true;
     }
 
-    private void OnMouseClick(object sender, MouseEventArgs e)
+    private void CloseApplication(object sender, MouseEventArgs e)
     {
         Window.OnClose();
     }
@@ -107,7 +107,7 @@ public class UserInterfaceHelper
             switch (i)
             {
                 case 0:
-                    button.OnMouseClick += OnMouseClick;
+                    button.OnMouseClick += CloseApplication;
                     button.Text = "Close application";
                     break;
 
@@ -122,14 +122,19 @@ public class UserInterfaceHelper
                     break;
 
                 case 3:
-                    button.OnMouseClick += OnMouseClick;
-                    button.Text = "";
+                    button.OnMouseClick += MakeNextSceneActive;
+                    button.Text = "Go to next scene";
                     break;
             }
 
             UserInterface.AddElement(button);
             pauseMenuButtons.Add(button);
         }
+    }
+
+    private void MakeNextSceneActive(object sender, MouseEventArgs e)
+    {
+        game.MakeNextSceneActive();
     }
 
     private void OnMouseLeave(object sender, MouseEventArgs e)

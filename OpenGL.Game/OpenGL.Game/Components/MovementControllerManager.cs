@@ -13,13 +13,13 @@ namespace OpenGL.Game.Components
 
         private List<MovementController> allMovementControllers = new List<MovementController>();
 
-        //Since this class has a  method that subscribes to an event in the constructor, we make sure we only subscribe to this event once.
-        private bool alreadySubscribedToStaticMethods = false;
-
         public MovementControllerManager()
         {
+            if(Instance == null)
+            {
             Instance = this;
             InputHelper.ButtonSpacePressedEvent += SelectNextMovementController;
+            }
         }
 
         public void MakeControllerActive(MovementController controller)
@@ -38,15 +38,27 @@ namespace OpenGL.Game.Components
 
             ChangeUITextToSelectedController();
         }
+        public override void OnAwake()
+        {
+            allMovementControllers.Clear();
+            currentlySelectedMovementController = null;
+            currentlySelectedMovementControllerIndex = 0;
+        }
+
         public override void OnStart()
         {
-
         }
 
         public override void OnUpdate()
         {
         }
 
+        public override void OnDisable()
+        {
+            allMovementControllers.Clear();
+            currentlySelectedMovementController = null;
+            currentlySelectedMovementControllerIndex = 0;
+        }
         /// <summary>
         /// This method increments the currentlySelectedMovementControllerIndex by 1, selects and makes the next MovementController in the allMovementControllers List active.
         /// </summary>

@@ -267,6 +267,228 @@ namespace SAEOpenGL.S1
             //User Interface
             userInterfaceHelper.SetupUI(Width, Height, game);
 
+            var skyboxDisplayScene = CreateSkyboxScene();
+            var objectDisplayScene = CreateObjectScene();
+
+            game.Scenes.Add(objectDisplayScene);
+            game.Scenes.Add(skyboxDisplayScene);
+            game.MainScene = skyboxDisplayScene;
+
+            //Hook input callbacks
+            InputHelper.InitInputs();
+            InputHelper.ButtonLPressedEvent += game.ToggleLightingCallback;
+
+            var windowPosition = Window.GetWindowPosition();
+            CursorRestriction.RestrictCursorToRectangle((int)windowPosition.X, (int)windowPosition.Y, (int)windowPosition.X + Width, (int)windowPosition.Y + Height);
+            Window.ShowCursor(false);
+
+            // Make sure to set up mouse event handlers for the window
+            Window.OnMouseCallbacks.Add(OpenGL.UI.UserInterface.OnMouseClick);
+            Window.OnMouseMoveCallbacks.Add(OpenGL.UI.UserInterface.OnMouseMove);
+
+            // Game loop
+            game.Initalize();
+
+            while (Window.Open)
+            {
+                Window.HandleEvents();
+
+                OnPreRenderFrame();
+
+                game.Update();
+                game.Render();
+
+                OnPostRenderFrame();
+
+                Time.Update();
+            }
+        }
+
+        #region Scenes
+        private static Scene CreateObjectScene()
+        {
+            // Load shader files
+            var cottageMaterial = ShaderProgram.Create("shaders\\simpleMetallicWithAlphaVert.vs", "shaders\\simpleMetallicWithAlphaFrag.fs");
+            var gearMaterial = ShaderProgram.Create("shaders\\simpleSpecularVert.vs", "shaders\\simpleSpecularFrag.fs");
+            var lightMaterial = ShaderProgram.Create("shaders/vertLight.vs", "shaders/fragLight.fs");
+            //Load the textures
+            List<OpenGL.Texture> cottageTextures = new List<OpenGL.Texture>();
+
+            //Cottage
+            var cottageTexture = new OpenGL.Texture("textures/Cottage_Clean_Base_Color.png");
+            var alphaTexture = new OpenGL.Texture("textures/Cottage_Clean_Opacity.png");
+            var normalTexture = new OpenGL.Texture("textures/Cottage_Clean_Normal.png");
+            var roughnessTexture = new OpenGL.Texture("textures/Cottage_Clean_Roughness.png");
+            var metallicTexture = new OpenGL.Texture("textures/Cottage_Clean_MetallicSmoothness.png");
+
+            cottageTextures.Add(cottageTexture);
+            cottageTextures.Add(alphaTexture);
+            cottageTextures.Add(normalTexture);
+            cottageTextures.Add(roughnessTexture);
+            cottageTextures.Add(metallicTexture);
+
+            //Setting the values of the sampler2Ds to their respective texture unit
+            //Texture unit 0 = baseColorMap (diffuseColor)
+            //Texture unit 1 = alphaMap
+
+            var baseColor = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "textureSampler");
+            var alphaMap = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "alphaSampler");
+            var normalMap = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "normalSampler");
+            var roughnessMap = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "roughnessSampler");
+            var metallicMap = OpenGL.Gl.GetUniformLocation(cottageMaterial.ProgramID, "metallicSampler");
+
+            OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, baseColor, 0);
+            OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, alphaMap, 1);
+            OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, normalMap, 2);
+            OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, roughnessMap, 3);
+            OpenGL.Gl.ProgramUniform1i(cottageMaterial.ProgramID, metallicMap, 4);
+
+            //Gear
+            List<OpenGL.Texture> gearTextures = new List<OpenGL.Texture>();
+            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_BaseColor.png"));
+            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_Normal.png"));
+            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_Roughness.png"));
+            gearTextures.Add(new OpenGL.Texture("textures/Gear_1_Specular.png"));
+
+            //Do the same for gearMaterial
+            //Texture unit 0 = baseColorMap (diffuseColor)
+            baseColor = OpenGL.Gl.GetUniformLocation(gearMaterial.ProgramID, "textureSampler");
+             normalMap = OpenGL.Gl.GetUniformLocation(gearMaterial.ProgramID, "normalSampler");
+             roughnessMap = OpenGL.Gl.GetUniformLocation(gearMaterial.ProgramID, "roughnessSampler");
+             metallicMap = OpenGL.Gl.GetUniformLocation(gearMaterial.ProgramID, "metallicSampler");
+
+
+            OpenGL.Gl.ProgramUniform1i(gearMaterial.ProgramID, baseColor, 0);
+            OpenGL.Gl.ProgramUniform1i(gearMaterial.ProgramID, normalMap, 1);
+            OpenGL.Gl.ProgramUniform1i(gearMaterial.ProgramID, roughnessMap, 2);
+            OpenGL.Gl.ProgramUniform1i(gearMaterial.ProgramID, metallicMap, 3);
+
+            //Creating the vaos for the obj models
+
+            //Gear
+            LoadObjFile("models/Gear1.obj", out List<Vertex> vertices, out List<ObjLoader.Loader.Data.VertexData.Texture> uvs, out List<Normal> normals,out List<Vector3> tangents, out List<Vector3> bitangents, out List<uint> indices);
+
+            var geo_gear = CreateVAO(vertices.ToArray(), uvs.ToArray(), normals.ToArray(),tangents.ToArray(), bitangents.ToArray(), indices.ToArray(), gearMaterial);
+
+            //Cottage
+            LoadObjFile("models/Cottage_FREE.obj", out List<Vertex> outputVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> outputTextures, out List<Normal> outputNormals, out List<Vector3> outputTangents, out List<Vector3> outputBitangents, out List<uint> outputIndices);
+
+            var geo_cottage = CreateVAO(outputVertices.ToArray(), outputTextures.ToArray(),outputNormals.ToArray(), outputTangents.ToArray(),outputBitangents.ToArray(),  outputIndices.ToArray(), cottageMaterial);
+
+            //Light cube
+            var geo_light = CreateVAO(vertices_cube, indices_cube, lightMaterial);
+
+            //Create cottage game object
+            GameObject obj_cottage = new GameObject("Cottage", game, new MeshRenderer(cottageMaterial, geo_cottage, cottageTextures));
+
+            //Create gear game object
+            GameObject obj_gear = new GameObject("Gear", game, new MeshRenderer(gearMaterial, geo_gear, gearTextures));
+
+             //Create light game object
+            var obj_pointLight = new GameObject("Light source", game, new MeshRenderer(lightMaterial, geo_light));
+            PointLight pointLight = new PointLight();
+            MovementController lightController = new MovementController(true);
+            obj_pointLight.AddComponent(lightController);
+            obj_pointLight.AddComponent(pointLight);
+
+            //Create camera game object
+            GameObject obj_camera = new GameObject("Camera", game);
+            MovementControllerManager movementControllerManager = new MovementControllerManager();
+            Camera cameraComponent = new Camera();
+            MovementController cameraController = new MovementController();
+            obj_camera.AddComponent(movementControllerManager);
+            obj_camera.AddComponent(cameraController);
+            obj_camera.AddComponent(cameraComponent);
+
+            //Make transformations
+            obj_cottage.Transform.Position = new Vector3(0, 0, -5);
+            obj_cottage.Transform.Scale = new Vector3(0.5f, 0.5f, 0.5f);
+
+            obj_gear.Transform.Position = new Vector3(6, 0, -5);
+            obj_gear.Transform.Scale = new Vector3(0.3f, 0.3f, 0.3f);
+
+            obj_pointLight.Transform.Position = new Vector3(1.3f, 1, -1);
+            obj_pointLight.Transform.Scale = new Vector3(0.2f, 0.2f, 0.2f);
+            obj_pointLight.Transform.Rotation = new Vector3(0.0f, 0.0f, 0.0f);
+
+            obj_camera.Transform.Position = new Vector3(0, -1, -5);
+
+            //Set main camera and add point light to the scene
+            Scene mainScene = new Scene(game);
+            
+            mainScene.MainCamera = cameraComponent;
+            mainScene.PointLights.Add(pointLight);
+
+            // Add gameobjects to scene
+            mainScene.SceneGraph.Add(obj_cottage);
+            mainScene.SceneGraph.Add(obj_gear);
+            mainScene.SceneGraph.Add(obj_pointLight);
+            mainScene.SceneGraph.Add(obj_camera);
+
+            return mainScene;
+
+        }
+        private static Scene CreateSkyboxScene()
+        {
+            // Load shader files
+            var skyboxMaterial = ShaderProgram.Create("shaders/skyboxVert.vs", "shaders/skyboxFrag.fs");
+            var skyboxMirrorMaterial = ShaderProgram.Create("shaders/skyboxMirrorVert.vs", "shaders/skyboxMirrorFrag.fs");
+
+            //Load the textures
+
+            //Skybox
+            List<OpenGL.Texture> skyBoxTextures = new List<OpenGL.Texture>();
+            skyBoxTextures.Add(new OpenGL.Texture(skyboxFilenames));
+
+            //Creating the vaos for the obj models
+
+            //Reflective sphere
+            LoadObjFile("models/Sphere.obj", out List<Vertex> sphereVertices, out List<ObjLoader.Loader.Data.VertexData.Texture> sphereUVs, out List<Normal> sphereNormals, out List<uint> sphereIndices);
+
+            var geo_sphere = CreateVAO(sphereVertices.ToArray(), sphereNormals.ToArray(), sphereIndices.ToArray(), skyboxMirrorMaterial);
+
+            //Skybox
+            var geo_skybox = new VAO(skyboxMaterial, new VBO<Vector3>(skyboxVertices), new VBO<uint>(skyboxIndices, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead));
+
+            //Create skyBoxGameObject
+            var obj_skyBox = new GameObject("Skybox", game, new MeshRenderer(skyboxMaterial, geo_skybox, skyBoxTextures));
+
+            //Create skyboxMirrorObject
+            GameObject obj_skyBoxMirror = new GameObject("SkyboxMirror", game, new MeshRenderer(skyboxMirrorMaterial, geo_sphere, skyBoxTextures));
+
+            //Create camera game object
+            GameObject obj_camera = new GameObject("Camera", game);
+            MovementControllerManager movementControllerManager = new MovementControllerManager();
+            Camera cameraComponent = new Camera();
+            MovementController cameraController = new MovementController();
+            obj_camera.AddComponent(movementControllerManager);
+            obj_camera.AddComponent(cameraController);
+            obj_camera.AddComponent(cameraComponent);
+
+            //Make transformations
+            obj_skyBoxMirror.Transform.Position = new Vector3(0, 0, 0);
+            obj_skyBoxMirror.Transform.Scale = new Vector3(1, 1, 1);
+
+            obj_camera.Transform.Position = new Vector3(0, 0, -5);
+
+            //Set main camera and add point light to the scene
+            Scene mainScene = new Scene(game);
+            
+            mainScene.MainCamera = cameraComponent;
+
+            // Add gameobjects to scene
+            mainScene.SceneGraph.Add(obj_skyBox);
+            mainScene.SceneGraph.Add(obj_skyBoxMirror);
+            mainScene.SceneGraph.Add(obj_camera);
+
+            return mainScene;
+
+        }
+
+
+
+        private static Scene CreateMainScene()
+        {
             // Load shader files
             var cottageMaterial = ShaderProgram.Create("shaders\\cottageVert.vs", "shaders\\cottageFrag.fs");
             var gearMaterial = ShaderProgram.Create("shaders\\gearVert.vs", "shaders\\gearFrag.fs");
@@ -385,48 +607,25 @@ namespace SAEOpenGL.S1
             obj_skyBoxMirror.Transform.Position = new Vector3(1, 1, 1);
             obj_skyBoxMirror.Transform.Scale = new Vector3(1, 1, 1);
 
-            //Set main camera and add point light to the game
-            game.MainCamera = cameraComponent;
-            game.PointLights.Add(pointLight);
+            //Set main camera and add point light to the scene
+            Scene mainScene = new Scene(game);
+            
+            mainScene.MainCamera = cameraComponent;
+            mainScene.PointLights.Add(pointLight);
 
             // Add gameobjects to scene
-            game.SceneGraph.Add(obj_cottage);
-            game.SceneGraph.Add(obj_gear);
-            game.SceneGraph.Add(obj_pointLight);
-            game.SceneGraph.Add(obj_skyBox);
-            game.SceneGraph.Add(obj_skyBoxMirror);
-            game.SceneGraph.Add(obj_camera);
+            mainScene.SceneGraph.Add(obj_cottage);
+            mainScene.SceneGraph.Add(obj_gear);
+            mainScene.SceneGraph.Add(obj_pointLight);
+            mainScene.SceneGraph.Add(obj_skyBox);
+            mainScene.SceneGraph.Add(obj_skyBoxMirror);
+            mainScene.SceneGraph.Add(obj_camera);
 
-            //Hook input callbacks
-            InputHelper.InitInputs();
-            InputHelper.ButtonLPressedEvent += game.ToggleLightingCallback;
+            return mainScene;
 
-            //Window.SetScreenMode(new Compatibility.ScreenResolution(1919, 1080, 256, 60), true);
-            var windowPosition = Window.GetWindowPosition();
-            CursorRestriction.RestrictCursorToRectangle((int)windowPosition.X, (int)windowPosition.Y, (int)windowPosition.X + Width, (int)windowPosition.Y + Height);
-            Window.ShowCursor(false);
-
-            // Make sure to set up mouse event handlers for the window
-            Window.OnMouseCallbacks.Add(OpenGL.UI.UserInterface.OnMouseClick);
-            Window.OnMouseMoveCallbacks.Add(OpenGL.UI.UserInterface.OnMouseMove);
-
-            // Game loop
-            game.Start();
-
-            while (Window.Open)
-            {
-                Window.HandleEvents();
-
-                OnPreRenderFrame();
-
-                game.Update();
-                game.Render();
-
-                OnPostRenderFrame();
-
-                Time.Update();
-            }
         }
+
+        #endregion
 
         #region Other Callbacks
 
