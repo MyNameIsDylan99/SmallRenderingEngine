@@ -3,7 +3,7 @@
 ## Introduction
 
 In the last module of my diploma at SAE Institute Zürich, we looked at Graphics Programming and how game engines are structured behind the scenes.
-For my assignment I worked on a game engine (it is more of a rendering engine right now) that is built upon giawas opengl4csharp framework: https://github.com/giawa/opengl4csharp
+For my assignment I worked on this rendering engine that is built upon giawas opengl4csharp framework: https://github.com/giawa/opengl4csharp
 
 ## Functionality
 
